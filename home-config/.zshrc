@@ -200,7 +200,7 @@ alias vimconf='$EDITOR ~/.vimrc'
 alias fix="eval $(ssh-agent -s)"
 
 # ╭─ System Management
-alias syncdotfiles='stow --target=$HOME --adopt --dir ~/unix-dotfiles home-config && ~/.config/i3/detect_env.sh'
+alias syncdotfiles='stow --target=$HOME --adopt --dir ~/unix-dotfiles home-config && ~/Scripts/detect_env.sh'
 
 # ╭─ Git
 alias s="git status"
