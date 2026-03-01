@@ -1,1 +1,1 @@
-/home/tym/.screenlayout/layout.personal.sh
+layout.personal.sh

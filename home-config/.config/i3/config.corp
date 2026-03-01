@@ -1,5 +1,5 @@
 # Corp Desktop (Google Workstation)
-set $wallpaper ~/Pictures/Wallpapers/main.png
+set $wallpaper $HOME/Pictures/Wallpapers/main.png
 
 # Corp Monitor Layout
 workspace 1 output DisplayPort-1

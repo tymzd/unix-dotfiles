@@ -1,5 +1,5 @@
 # Personal Machine (Arch/Hyprland/i3)
-set $wallpaper ~/Pictures/Wallpapers/cityscape/tokyo-night.jpg
+set $wallpaper $HOME/Pictures/Wallpapers/cityscape/tokyo-night.jpg
 
 # Monitor Layout
 workspace 1 output DP-1

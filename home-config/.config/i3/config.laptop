@@ -1,5 +1,5 @@
 # Laptop Setup (4K Scaling)
-set $wallpaper ~/Pictures/Wallpapers/debian.png
+set $wallpaper $HOME/Pictures/Wallpapers/debian.png
 
 # High DPI Scaling for 4K display
 exec_always --no-startup-id xrdb -merge ~/.Xresources

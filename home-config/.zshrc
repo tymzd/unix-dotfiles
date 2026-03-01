@@ -98,13 +98,15 @@ if [[ "$USER" == "timzh" ]]; then
     [[ -f /etc/bash_completion.d/g4d ]] && source /etc/bash_completion.d/g4d
 
     # Google Specific Aliases
-    alias cider="/opt/google/chrome/google-chrome \"--profile-directory=Profile 1\" --app-id=apkjikbjlghbonboeaehkeoadefnfjmb"
-    alias cloudtop='ssh ${USER}@${USER}.c.googlers.com -Y -C'
-    alias gemini='/google/bin/releases/gemini-cli/tools/gemini'
-    alias plxutil='/google/bin/releases/plx/plxutil/live/plxutil'
-    alias pubsub='/google/bin/releases/goops/pubsub/pubsub'
-    alias mdformat='/google/bin/releases/corpeng-engdoc/tools/mdformat'
-    alias prodspec='/google/bin/releases/rollouts/prodspec/prodspec'
+    if [ -d '/google/' ]; then
+        alias cider="/opt/google/chrome/google-chrome \"--profile-directory=Profile 1\" --app-id=apkjikbjlghbonboeaehkeoadefnfjmb"
+        alias cloudtop='ssh ${USER}@${USER}.c.googlers.com -Y -C'
+        alias gemini='/google/bin/releases/gemini-cli/tools/gemini'
+        alias plxutil='/google/bin/releases/plx/plxutil/live/plxutil'
+        alias pubsub='/google/bin/releases/goops/pubsub/pubsub'
+        alias mdformat='/google/bin/releases/corpeng-engdoc/tools/mdformat'
+        alias prodspec='/google/bin/releases/rollouts/prodspec/prodspec'
+    fi
 
     # Project Specific
     alias ss='code ~/sos'
@@ -200,7 +202,7 @@ alias vimconf='$EDITOR ~/.vimrc'
 alias fix="eval $(ssh-agent -s)"
 
 # ╭─ System Management
-alias syncdotfiles='stow --target=$HOME --adopt --dir ~/unix-dotfiles home-config && ~/.config/i3/detect_env.sh'
+alias syncdotfiles='stow --target=$HOME --adopt --dir ~/unix-dotfiles home-config && ~/Scripts/detect_env.sh'
 
 # ╭─ Git
 alias s="git status"

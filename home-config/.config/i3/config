@@ -1,6 +1,10 @@
 # ╔══════════════════════════════════════════════════════════════════════════════╗
 # ║ 1. VARIABLES & LOCAL OVERRIDES                                             ║
 # ╚══════════════════════════════════════════════════════════════════════════════╝
+# --- Machine Specific Settings ---
+# This file is loaded first to allow machine-specific overrides (first-win policy).
+include ~/.config/i3/config.local
+
 set $mod Mod4
 
 # --- Default Applications (Fallback) ---
@@ -10,10 +14,6 @@ set $file_manager  nemo
 set $obsidian      obsidian
 set $screenshot    import png:- | xclip -selection clipboard -t image/png
 set $settings_app  pavucontrol
-
-# --- Machine Specific Settings ---
-# This file is loaded last to allow machine-specific overrides.
-include ~/.config/i3/config.local
 
 
 # ╔══════════════════════════════════════════════════════════════════════════════╗
