@@ -1,39 +1,78 @@
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║ 1. USER IDENTITY & INCLUDES                                                ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
 [user]
-	email = admin@timz.dev
 	name = Tim Zhang
+
+# Load machine-specific settings (Email, Credential Helpers, Proxies)
+# This file is symlinked by ~/.config/i3/detect_env.sh
+[include]
+	path = ~/.gitconfig.local
+
+
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║ 2. CORE SETTINGS                                                           ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+[core]
+	pager = delta
+	excludesfile = ~/.gitignore_global
+    autocrlf = input
+
+[color]
+	ui = always
+
+[url "git@github.com:"]
+	insteadOf = https://github.com/
+	compression = 0
+
+
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║ 3. DIFF & MERGE (Delta)                                                    ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+[interactive]
+	diffFilter = delta --color-only
+
+[delta]
+	navigate = true
+	dark = true
+    line-numbers = true
+    side-by-side = false
+
+[merge]
+	ff = only
+	conflictstyle = zdiff3
+
+[pull]
+	ff = only
+
+
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║ 4. ALIASES                                                                 ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
 [alias]
-        unadd = reset HEAD
-        discard = checkout --
-        untrack = rm --cached
-        lg = "!f() { \
+	a = "!f() { if [ -z \"$1\" ]; then git add .; else git add \"$@\"; fi; }; f"
+	c = commit
+	cm = commit -m
+	ca = commit --amend
+	can = commit --amend --no-edit
+	co = checkout
+	cob = checkout -b
+	d = diff
+	dc = diff --cached
+    s = status
+	unadd = reset HEAD
+	discard = checkout --
+	untrack = rm --cached
+	br = "!f() { if [ -z \"$1\" ]; then git branch; else git branch --list \"*$@*\"; fi; }; f"
+	whichbranch = "!f() { git log --pretty=format:'%h%n' --all --decorate --grep=\"$1\" | git branch --contains; }; f"
+	ri = "!f() { git rebase --interactive HEAD~${1:-5}; }; f"
+	rc = rebase --continue
+	ra = rebase --abort
+	lg = "!f() { \
         local num_lines=${1:-11}; \
         local i=0; \
-        git log --pretty=format:\"%C(yellow)%h%Creset %C(green)%ad%Creset %C(bold blue)<%an>%Creset%C(red)%d%Creset %s\" --date=short --abbrev-commit --color=always -n "$((num_lines+1))" | while read -r line; do \
+        git log --pretty=format:\"%C(yellow)%h%Creset %C(green)%ad%Creset %C(bold blue)<%an>%Creset%C(red)%d%Creset %s\" --date=short --abbrev-commit --color=always -n \"$((num_lines+1))\" | while read -r line; do \
             echo \"  ~$i $line\" | sed \"s/%P(i)/$i/\"; \
             i=$((i+1)); \
         done; \
     }; f"
-        cm = commit -m
-        c = commit
-        br = "!f() { if [ -z \"$1\" ]; then git branch; else git branch --list \"*$@*\"; fi; }; f"
-        co = checkout
-        cob = checkout -b
-        ri = "!f() { git rebase --interactive HEAD~${1:-5}; }; f"
-        rc = rebase --continue
-        a = "!f() { if [ -z \"$1\" ]; then git add .; else git add \"$@\"; fi; }; f"
-        ca = commit --amend
-        can = commit --amend --no-edit
-        d = diff
-        dc = diff --cached
-        # st = git-st <-- I added a `git-st` script to my PATH from https://www.reddit.com/r/git/comments/avv34g/nicer_gitstatus/.
-        # When I run `git st`, Git automatically finds and runs `git-st`. So no need for an alias.
-[core]
-	editor = vim
-	pager = cat
-[credential]
-	helper = store
-[pager]
-	log = false
-    branch = false
-[color]
-	ui = true

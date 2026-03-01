@@ -1,0 +1,6 @@
+[user]
+	email = timzh@google.com
+[credential]
+	helper = corpsso
+[http]
+	cookiefile = /home/timzh/.gitcookies
