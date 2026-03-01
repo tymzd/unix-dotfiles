@@ -37,8 +37,22 @@ sudo stow --target=/ --dir . root-config
 Or more conveniently, I have these aliases set in `.zshrc`:
 
 ```sh
-alias syncdotfiles="stow --target=$HOME --adopt --dir . home-config"
+# This also runs a detection script to link machine-specific local overrides.
+alias syncdotfiles="stow --target=$HOME --adopt --dir . home-config && ~/.config/i3/detect_env.sh"
 ```
+
+### Hardware Setups
+
+I maintain 3 distinct hardware setups with this single repository:
+
+1.  **Personal Arch Setup**: My home machine running Hyprland (Wayland) and i3 (X11).
+2.  **Corp Workstation**: Google workstation (`/google` exists) with a specific 3-monitor layout.
+3.  **Corp Laptop**: Google laptop with a high-DPI 4K display and specific touchpad requirements.
+
+The dotfiles handle these variations through intelligent detection:
+
+- **ZSH**: `.zshrc` uses conditional logic to detect the environment. It checks if the user is `timzh` to load Google-specific tools and paths, and checks `$XDG_SESSION_TYPE` to set appropriate aliases for Wayland or X11.
+- **i3 & Monitor Layouts**: A `detect_env.sh` script automatically symlinks machine-specific configurations (`config.personal`, `config.corp`, `config.laptop`) to `config.local`, and appropriate monitor scripts to `main.sh`.
 
 ### Personal Maintenance
 
@@ -52,4 +66,3 @@ This list of packages can be restored by following the instructions at https://w
   containing the `xborders` script to `Scripts/xborders` and set up an alias to
   it in ZSH.
 - `i3-volume` is used to add a polybar module to display output volume.
-

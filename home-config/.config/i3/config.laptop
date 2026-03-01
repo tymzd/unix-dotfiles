@@ -1,0 +1,16 @@
+# Laptop Setup (4K Scaling)
+set $wallpaper ~/Pictures/Wallpapers/debian.png
+
+# High DPI Scaling for 4K display
+exec_always --no-startup-id xrdb -merge ~/.Xresources
+
+# Application Variables
+set $terminal      alacritty
+set $browser       google-chrome --force-device-scale-factor=2
+set $file_manager  nautilus
+set $obsidian      ~/bin/obsidian
+set $settings_app  gnome-control-center
+
+# Touchpad Config
+exec_always xinput set-prop "ELAN067A:00 04F3:3197 Touchpad" "libinput Natural Scrolling Enabled" 1
+exec_always xinput set-prop "ELAN067A:00 04F3:3197 Touchpad" "libinput Accel Speed" 0.8

@@ -1,0 +1,31 @@
+# Obsidian Runtime & Cache
+home-config/.config/obsidian/Cache/
+home-config/.config/obsidian/Code Cache/
+home-config/.config/obsidian/Crashpad/
+home-config/.config/obsidian/DawnGraphiteCache/
+home-config/.config/obsidian/DawnWebGPUCache/
+home-config/.config/obsidian/GPUCache/
+home-config/.config/obsidian/IndexedDB/
+home-config/.config/obsidian/Local Storage/
+home-config/.config/obsidian/Session Storage/
+home-config/.config/obsidian/WebStorage/
+home-config/.config/obsidian/Cookies*
+home-config/.config/obsidian/*.json
+home-config/.config/obsidian/*.log
+home-config/.config/obsidian/Preferences
+home-config/.config/obsidian/id
+home-config/.config/obsidian/*.asar
+
+# Systemd Generated Symlinks
+home-config/.config/systemd/user/*.wants/
+home-config/.config/systemd/user/pipewire-session-manager.service
+
+# Machine Specific Overrides (Personal/Local)
+home-config/.config/i3/config.local
+home-config/.zshrc.local
+
+# General
+home-config/.config/mimeapps.list
+.DS_Store
+*.tmp
+home-config/.config/obsidian/

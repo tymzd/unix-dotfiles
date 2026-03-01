@@ -1,37 +1,39 @@
-# ============================================================================ #
-#                                Oh My ZSH                                     #
-# ============================================================================ #
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║ 1. PATH & ENVIRONMENT VARIABLES                                            ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+export PATH="${HOME}/Scripts:${HOME}/.local/bin:${PATH}"
+export EDITOR='vim'
+export MANPAGER='vim -M +MANPAGER -'
+export LESS="-R"
+
+# Language Specifics
+export GOPATH="${HOME}/go"
+export GOBIN="${GOPATH}/bin"
+export GEM_HOME="${HOME}/gems"
+export PATH="${GOBIN}:${GOPATH}:${GEM_HOME}/bin:${PATH}"
+
+# pnpm
+export PNPM_HOME="${HOME}/.local/share/pnpm"
+[[ -d "$PNPM_HOME" ]] && export PATH="$PNPM_HOME:$PATH"
+
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║ 2. OH MY ZSH CONFIGURATION                                                 ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+# ╭─ Instant Prompt
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# Path to oh-my-zsh installation.
-export ZSH="$HOME/.oh-my-zsh"
-
-# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="robbyrussell"
-
-# _ and - will be interchangeable.
+# ╭─ OMZ Setup
+export ZSH="${HOME}/.oh-my-zsh"
+ZSH_THEME="powerlevel10k/powerlevel10k"
 HYPHEN_INSENSITIVE="true"
+DISABLE_AUTO_UPDATE="true"
+ZSH_DISABLE_COMPFIX="true"
 
-# Oh my ZSH updating behaviour.
-zstyle ':omz:update' mode auto      # update automatically without asking
-# zstyle ':omz:update' mode disabled  # disable automatic updates
-# zstyle ':omz:update' mode reminder  # just remind me to update when it's time
+zstyle ':omz:update' mode auto
 zstyle ':omz:update' frequency 13
 
-# Uncomment the following line if pasting URLs and other text is messed up.
-DISABLE_MAGIC_FUNCTIONS="true"
-
-# ============================================================================ #
-#                           Oh my ZSH and other Extensions                     #
-# ============================================================================ #
-PLUGINS_DIR=$HOME/.oh-my-zsh/custom/plugins
-
-# Plugins.
 plugins=(
 	git
 	fast-syntax-highlighting
@@ -39,138 +41,182 @@ plugins=(
 	zsh-vi-mode
 )
 
-# FZF.
-# source <(fzf --zsh)
+# Speed up compinit by skipping timestamp checks if the cache is less than 24h old.
+for dump in ~/.zcompdump*(N.m-1); do
+	alias compinit="compinit -C"
+	break
+done
 
-# Zoxide: https://github.com/ajeetdsouza/zoxide.
-eval "$(zoxide init zsh)"
+[[ -f "${ZSH}/oh-my-zsh.sh" ]] && source "${ZSH}/oh-my-zsh.sh"
+unalias compinit 2>/dev/null
 
-# Atuin.
-. "$HOME/.atuin/bin/env"
-eval "$(atuin init zsh --disable-up-arrow)"
-bindkey '^h' _atuin_search_widget
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║ 3. SHELL TOOLS (FZF, Zoxide, Atuin)                                        ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+# ╭─ FZF
+[[ -f /usr/share/fzf/key-bindings.zsh ]] && source /usr/share/fzf/key-bindings.zsh
+[[ -f /usr/share/fzf/completion.zsh ]] && source /usr/share/fzf/completion.zsh
+if command -v fzf >/dev/null; then
+    source <(fzf --zsh)
+fi
 
-# This line must be after the above `plugins` array.
-source $ZSH/oh-my-zsh.sh
+# ╭─ Zoxide (Cached for Speed)
+if command -v zoxide >/dev/null; then
+    if [[ -f ~/.cache/zoxide.zsh ]]; then
+        source ~/.cache/zoxide.zsh
+    else
+        zoxide init zsh > ~/.cache/zoxide.zsh
+        source ~/.cache/zoxide.zsh
+    fi
+    alias cd='z'
+fi
 
-# ============================================================================ #
-#                                Powerlevel10k                                 #
-# ============================================================================ #
-# This makes p10k CLI available.
-source $HOME/.oh-my-zsh/custom/themes/powerlevel10k/powerlevel10k.zsh-theme
+# ╭─ Atuin
+if command -v atuin >/dev/null; then
+    eval "$(atuin init zsh --disable-up-arrow)"
+    bindkey '^h' _atuin_search_widget
+fi
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+# ╭─ Theme Config
+[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
-# ============================================================================ #
-#                                Shell Settings                                #
-# ============================================================================ #
-# Enable reverse search (builtin).
+
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║ 4. GOOGLE INTERNAL & CORP CONFIG                                           ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+if [[ "$USER" == "timzh" ]]; then
+    # Path Updates
+    # Note: Laptop has /usr/local/google but not /google
+    export PATH="/usr/local/go/bin:${HOME}/bin:${HOME}/bin/protoc/bin:${PATH}"
+
+    # Google SDK / Gcloud
+    [[ -f "${HOME}/google-cloud-sdk/path.zsh.inc" ]] && . "${HOME}/google-cloud-sdk/path.zsh.inc"
+    [[ -f "${HOME}/google-cloud-sdk/completion.zsh.inc" ]] && . "${HOME}/google-cloud-sdk/completion.zsh.inc"
+
+    # Completions
+    [[ -e /etc/bash_completion.d/hgd ]] && source /etc/bash_completion.d/hgd
+    [[ -f /etc/bash_completion.d/g4d ]] && source /etc/bash_completion.d/g4d
+
+    # Google Specific Aliases
+    alias cider="/opt/google/chrome/google-chrome \"--profile-directory=Profile 1\" --app-id=apkjikbjlghbonboeaehkeoadefnfjmb"
+    alias cloudtop='ssh ${USER}@${USER}.c.googlers.com -Y -C'
+    alias gemini='/google/bin/releases/gemini-cli/tools/gemini'
+    alias plxutil='/google/bin/releases/plx/plxutil/live/plxutil'
+    alias pubsub='/google/bin/releases/goops/pubsub/pubsub'
+    alias mdformat='/google/bin/releases/corpeng-engdoc/tools/mdformat'
+    alias prodspec='/google/bin/releases/rollouts/prodspec/prodspec'
+
+    # Project Specific
+    alias ss='code ~/sos'
+    alias deploy='code ~/deploy'
+    alias sites='code ~/sites'
+fi
+
+
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║ 5. UTILITY FUNCTIONS (Base64, Hex, Hashes)                                 ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+_get_input() {
+  if [ -t 0 ]; then
+    [ -z "$1" ] && return 1
+    echo -n "$1"
+  else
+    cat -
+  fi
+}
+
+from64()  { _get_input "$@" | base64 --decode }
+to64()    { _get_input "$@" | base64 }
+tohex()   { _get_input "$@" | xxd -p -c 0 }
+fromhex() { _get_input "$@" | xxd -r -p }
+
+sha256base64() { [[ -f "$1" ]] && openssl dgst -sha256 -binary "$1" | base64 || printf '%s' "$1" | openssl dgst -sha256 -binary | base64 }
+sha1base64()   { [[ -f "$1" ]] && openssl dgst -sha1 -binary "$1" | base64   || printf '%s' "$1" | openssl dgst -sha1 -binary | base64 }
+sha512base64() { [[ -f "$1" ]] && openssl dgst -sha512 -binary "$1" | base64 || printf '%s' "$1" | openssl dgst -sha512 -binary | base64 }
+
+# Deps.dev specific
+function apply_prod {
+  for cluster in $(sos cluster list | grep 'Home' | awk '{print $2}'); do
+    echo "Applying $cluster..."; sos spanner -cluster=$cluster apply ~/sos/config/spanner/sos-prod.ddl
+  done
+}
+
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║ 6. SHELL SETTINGS & VIM MODE                                               ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
 bindkey -v
 bindkey '^R' history-incremental-search-backward
 
-# -------------------------- Enable Vim keybindings -------------------------- #
-set -o vi
-export EDITOR='vim'
-
-# Remap caps and escape.
-setxkbmap -option caps:swapescape
-
-# Fixes Vim mode blinking cursor.
-# Source: https://www.reddit.com/r/vim/comments/mxhcl4/setting_cursor_indicator_for_zshvi_mode_in/.
+# ╭─ Cursor Shaping Logic
 function zle-keymap-select () {
     case $KEYMAP in
-        vicmd) echo -ne '\e[1 q';; # block
-        viins|main) echo -ne '\e[5 q';; # beam
+        vicmd)      echo -ne '\e[1 q';; # Block
+        viins|main) echo -ne '\e[5 q';; # Beam
     esac
 }
 zle -N zle-keymap-select
 
 zle-line-init() {
-    # Initiate `vi insert` as keymap (can be removed if `bindkey -V` has been set elsewhere)
     zle -K viins
     echo -ne "\e[5 q"
 }
-
 zle -N zle-line-init
 
-# Use beam shape cursor on startup.
+preexec() { echo -ne '\e[5 q' ;}
 echo -ne '\e[5 q'
 
-# Use beam shape cursor for each new prompt.
-preexec() { echo -ne '\e[5 q' ;}
 
-# ============================================================================ #
-#                                    Aliases                                   #
-# ============================================================================ #
-# xclip commands.
-alias screenshot='import png:- | xclip -selection clipboard -t image/png'
-alias saveimg='xclip -selection clipboard -t image/png -o > '
-alias copy='xclip -selection clipboard'
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║ 7. ALIASES                                                                 ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+# ╭─ Environment Detection
+if [[ "$XDG_SESSION_TYPE" == "wayland" ]]; then
+    alias screenshot='grim -g "$(slurp)" - | wl-copy'
+    alias copy='wl-copy'
+    alias paste='wl-paste'
+    alias saveimg='wl-paste > '
+    alias hyprconf='$EDITOR ~/.config/hypr/hyprland.conf'
+    alias waybarconf='$EDITOR ~/.config/waybar/config'
+else
+    alias screenshot='import png:- | xclip -selection clipboard -t image/png'
+    alias copy='xclip -selection clipboard'
+    alias saveimg='xclip -selection clipboard -target image/png -out'
+    alias i3conf='$EDITOR ~/.config/i3/config'
+    alias i3r='i3-msg restart'
+    alias picomconf='$EDITOR ~/.config/picom/picom.conf'
+    alias polybarconf='$EDITOR ~/.config/polybar/config.ini'
+    
+    if command -v setxkbmap >/dev/null; then
+        setxkbmap -option caps:swapescape
+    fi
+fi
 
-# i3
-alias i3r='i3-msg restart'
-
-# Stow sync the home directory's configs.
-alias syncdotfiles='stow --target=$HOME --adopt --dir /home/tym/Dotfiles home-config '
-
-# Configuration editing shorthands
-alias i3conf='$EDITOR /home/tym/Dotfiles/home-config/.config/i3/config && syncdotfiles'
-alias picomconf='$EDITOR /home/tym/Dotfiles/home-config/.config/picom/picom.conf && syncdotfiles'
-alias zshconf='$EDITOR /home/tym/Dotfiles/home-config/.zshrc && syncdotfiles'
-alias vimconf='$EDITOR /home/tym/Dotfiles/home-config/.vimrc && syncdotfiles'
-alias terminalconf='$EDITOR /home/tym/Dotfiles/home-config/.config/alacritty/alacritty.toml && syncdotfiles'
-alias polybarconf='$EDITOR /home/tym/Dotfiles/home-config/.config/polybar/config.ini && syncdotfiles'
-
-# Always show hidden files.
+# ╭─ General
 alias ls='ls -a --color=auto'
+alias notify="notify-send"
+alias less='less -N'
+alias zshconf='$EDITOR ~/.zshrc'
+alias vimconf='$EDITOR ~/.vimrc'
+alias fix="eval $(ssh-agent -s)"
 
-# Open file manager.
-alias open='nemo'
+# ╭─ System Management
+alias syncdotfiles='stow --target=$HOME --adopt --dir ~/unix-dotfiles home-config && ~/.config/i3/detect_env.sh'
 
-# Git commands.
+# ╭─ Git
+alias s="git status"
 alias c="git commit -m "
 alias a="git commit --amend"
-alias s="git status"
 alias p="git pull"
 alias u="git push"
 alias b="git branch"
 
-# System notification.
-alias notify="notify-send"
 
-# Tools.
-alias less='less -N'
-alias cd='z'
-alias clip-save='xclip -selection clipboard -t image/png -o > '
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║ 8. FINAL HOOKS                                                             ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+# ╭─ NVM (Node Version Manager)
+export NVM_DIR="$HOME/.nvm"
+[[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
 
-# ============================================================================ #
-#                             Environment Variables
-# ============================================================================ #
-# For IBus to work.
-export GTK_IM_MODULE=ibus
-export QT_IM_MODULE=ibus
-export XMODIFIERS=@im=ibus
-
-# Lets Vim take over as the pager for viewing man pages.
-# https://github.com/vim/vim/issues/2823
-export MANPAGER='vim -M +MANPAGER -'
-
-# ============================================================================ #
-#                             Environment Variables
-# ============================================================================ #
-# Make `nvm` available for changing Node versions.
-source /usr/share/nvm/init-nvm.sh
-
-# ============================================================================ #
-#                                   Override
-# ============================================================================ #
-# Ensure less always preserves colour of things piped to it.
-export LESS="-R"
-
-# ============================================================================ #
-#                                    Scripts
-# ============================================================================ #
-# Custom scripts in ~/Scripts.
-PATH=$PATH:~/Scripts
-
+# ╭─ Machine Local Overrides
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local

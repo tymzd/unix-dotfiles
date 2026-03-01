@@ -1,0 +1,13 @@
+# Personal Machine (Arch/Hyprland/i3)
+set $wallpaper ~/Pictures/Wallpapers/cityscape/tokyo-night.jpg
+
+# Monitor Layout
+workspace 1 output DP-1
+workspace 2 output DP-2
+
+# Application Variables
+set $terminal      kitty
+set $browser       google-chrome-stable
+set $file_manager  nemo
+set $obsidian      obsidian
+set $settings_app  pavucontrol

@@ -1,0 +1,23 @@
+[Unit]
+Description=RClone Mount for Obsidian Wiki
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+ExecStart=/usr/bin/rclone mount wiki:wiki/content /home/tym/wiki \
+    --vfs-cache-mode full \
+    --vfs-cache-max-age 24h \
+    --vfs-cache-max-size 10G \
+    --vfs-read-chunk-size 128M \
+    --vfs-read-chunk-size-limit off \
+    --dir-cache-time 72h \
+    --attr-timeout 72h \
+    --vfs-fast-fingerprint \
+    --no-modtime
+ExecStop=/usr/bin/fusermount -u /home/tym/wiki
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=default.target

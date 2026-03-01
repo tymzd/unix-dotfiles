@@ -1,0 +1,14 @@
+# Corp Desktop (Google Workstation)
+set $wallpaper ~/Pictures/Wallpapers/main.png
+
+# Corp Monitor Layout
+workspace 1 output DisplayPort-1
+workspace 2 output DisplayPort-2
+workspace 3 output DisplayPort-3
+
+# Application Variables
+set $terminal      alacritty
+set $browser       google-chrome
+set $file_manager  nautilus
+set $obsidian      ~/bin/obsidian
+set $settings_app  gnome-control-center
