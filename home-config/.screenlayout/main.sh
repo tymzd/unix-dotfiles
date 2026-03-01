@@ -1,1 +1,1 @@
-layout.personal.sh
+layout.laptop.sh

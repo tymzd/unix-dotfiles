@@ -29,3 +29,5 @@ home-config/.config/mimeapps.list
 .DS_Store
 *.tmp
 home-config/.config/obsidian/
+.vim/
+
