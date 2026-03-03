@@ -66,6 +66,13 @@ set colorcolumn=80
 colorscheme synthwave84
 " colorscheme onedark
 
+" Enable transparency
+highlight Normal guibg=NONE ctermbg=NONE
+highlight NonText guibg=NONE ctermbg=NONE
+highlight NormalNC guibg=NONE ctermbg=NONE
+highlight SignColumn guibg=NONE ctermbg=NONE
+highlight EndOfBuffer guibg=NONE ctermbg=NONE
+
 
 " ╔══════════════════════════════════════════════════════════════════════════════╗
 " ║ 5. MACHINE LOCAL OVERRIDES                                                 ║
