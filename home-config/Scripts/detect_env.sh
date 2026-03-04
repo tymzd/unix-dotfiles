@@ -21,3 +21,6 @@ else
     ln -sf "layout.personal.sh" "$LAYOUT_REPO/main.sh"
     ln -sf "$HOME_CONFIG/gitconfig.personal" "$HOME/.gitconfig.local"
 fi
+
+# Ensure all screenlayout scripts are executable.
+chmod +x "$LAYOUT_REPO"/*.sh

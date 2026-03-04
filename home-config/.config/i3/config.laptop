@@ -19,3 +19,7 @@ workspace 3 output eDP-1
 # Touchpad Config
 exec_always xinput set-prop "ELAN067A:00 04F3:3197 Touchpad" "libinput Natural Scrolling Enabled" 1
 exec_always xinput set-prop "ELAN067A:00 04F3:3197 Touchpad" "libinput Accel Speed" 0.8
+
+# Applicatio[n bindings
+bindsym $mod+c       exec --no-startup-id "jetski ~/sos"
+

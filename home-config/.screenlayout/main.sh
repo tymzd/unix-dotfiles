@@ -1,1 +1,1 @@
-layout.laptop.sh
+layout.corp.sh

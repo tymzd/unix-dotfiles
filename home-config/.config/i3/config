@@ -2,8 +2,7 @@
 # ║ 1. VARIABLES & LOCAL OVERRIDES                                             ║
 # ╚══════════════════════════════════════════════════════════════════════════════╝
 # --- Machine Specific Settings ---
-# This file is loaded first to allow machine-specific overrides (first-win policy).
-include ~/.config/i3/config.local
+# (Moved to end for override priority)
 
 set $mod Mod4
 
@@ -26,6 +25,9 @@ default_floating_border pixel 4
 new_window              pixel 3
 for_window [class="^.*"] border pixel 4
 title_align             center
+
+gaps inner 10
+smart_gaps on
 
 # --- Color Palette ---
 set $bg-color            #282C34
@@ -54,7 +56,8 @@ exec --no-startup-id copyq
 
 # Visual effects
 exec_always --no-startup-id picom -b
-exec_always --no-startup-id ~/.screenlayout/main.sh
+exec_always --no-startup-id ~/.local/opt/xborders/xborders --border-rgba "#61AFEF" --border-width 4 --border-radius 14
+exec_always --no-startup-id ~/Scripts/detect_env.sh && ~/.screenlayout/main.sh
 
 
 # ╔══════════════════════════════════════════════════════════════════════════════╗
@@ -134,7 +137,6 @@ bindsym $mod+Shift+0 move container to workspace number $ws10
 bindsym $mod+Return  exec $terminal
 bindsym $mod+g       exec $browser
 bindsym $mod+n       exec $file_manager
-bindsym $mod+c       exec --no-startup-id "code ~/sos"
 bindsym $mod+Shift+p exec gnome-control-center
 bindsym $mod+v       exec --no-startup-id copyq menu
 
@@ -183,6 +185,7 @@ mode "resize" {
 # ╔══════════════════════════════════════════════════════════════════════════════╗
 # ║ 9. SYSTEM BINDINGS                                                         ║
 # ╚══════════════════════════════════════════════════════════════════════════════╝
+bindsym $mod+Shift+o exec --no-startup-id i3lock -c 000000
 bindsym $mod+Shift+c reload
 bindsym $mod+Shift+r restart
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'Exit i3?' -B 'Yes' 'i3-msg exit'"
@@ -195,18 +198,9 @@ bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'Exit i3?' -B 'Yes' 'i3-msg e
 exec_always --no-startup-id [ -f ~/.config/polybar/launch.sh ] && ~/.config/polybar/launch.sh
 
 # ╭─ i3bar (Fallback)
-bar {
-    status_command i3status
-    position top
-    modifier none
-    hidden_state hide
-    colors {
-        background $bg-color
-        statusline $text-color
-        separator  $inactive-text-color
-        focused_workspace  $focused-bg-color  $focused-bg-color  #111111
-        active_workspace   $inactive-bg-color $inactive-bg-color $text-color
-        inactive_workspace $inactive-bg-color $inactive-bg-color $inactive-text-color
-        urgent_workspace   $urgent-bg-color   $urgent-bg-color   $text-color
-    }
-}
+# Status bar disabled.
+
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║ 11. LOCAL OVERRIDES                                                        ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+include ~/.config/i3/config.local
