@@ -194,7 +194,7 @@ else
 fi
 
 # ╭─ General
-alias ls='ls -a --color=auto'
+alias ls='ls --color=auto'
 alias notify="notify-send"
 alias less='less -N'
 alias zshconf='$EDITOR ~/.zshrc'

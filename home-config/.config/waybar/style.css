@@ -36,6 +36,7 @@ window#waybar {
 }
 
 #clock,
+#custom-clock,
 #network,
 #pulseaudio,
 #tray {
@@ -45,7 +46,8 @@ window#waybar {
     border-radius: 12px;
 }
 
-#clock {
+#clock,
+#custom-clock {
     background-color: #24283b; /* Darker navy */
     font-weight: bold;
 }
@@ -58,12 +60,14 @@ window#waybar {
     background-color: #f7768e; /* Muted red for warning */
 }
 
-#pulseaudio {
+#pulseaudio,
+#pulseaudio-device {
     background-color: #565f89;
     color: #ffffff;
 }
 
-#pulseaudio.muted {
+#pulseaudio.muted,
+#pulseaudio-device.muted {
     background-color: #444b6a;
     color: #a9b1d6;
 }

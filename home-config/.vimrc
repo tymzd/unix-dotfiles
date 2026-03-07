@@ -36,8 +36,9 @@ vnoremap Y "+y
 " ╔══════════════════════════════════════════════════════════════════════════════╗
 " ║ 3. TERMINAL & CURSOR FIXES                                                 ║
 " ╚══════════════════════════════════════════════════════════════════════════════╝
-" Prevent delay after pressing ESC
-set noesckeys
+" Reduce delay after pressing ESC without breaking escape sequences
+set ttimeout
+set ttimeoutlen=50
 
 " Cursor shaping (Block in Normal, Beam in Insert)
 autocmd VimEnter * silent exec "! echo -ne '\e[1 q'"
@@ -46,8 +47,6 @@ let &t_EI = "\e[2 q"
 autocmd VimLeave * silent exec "! echo -ne '\e[5 q'"
 
 " Advanced Auto-Paste Detection (fixes indentation issues when pasting)
-let &t_SI .= "\<Esc>[?2004h"
-let &t_EI .= "\<Esc>[?2004l"
 inoremap <special> <expr> <Esc>[200~ XTermPasteBegin()
 function! XTermPasteBegin()
   set pastetoggle=<Esc>[201~
