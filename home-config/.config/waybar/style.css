@@ -39,32 +39,35 @@ window#waybar {
 #network,
 #pulseaudio,
 #tray {
-    padding: 0 10px;
+    padding: 0 15px;
     color: #ffffff;
+    margin: 4px 2px;
+    border-radius: 12px;
 }
 
 #clock {
-    background-color: #64727D;
+    background-color: #24283b; /* Darker navy */
+    font-weight: bold;
 }
 
 #network {
-    background-color: #2980b9;
+    background-color: #414868;
 }
 
 #network.disconnected {
-    background-color: #f1c40f;
+    background-color: #f7768e; /* Muted red for warning */
 }
 
 #pulseaudio {
-    background-color: #f1c40f;
-    color: #000000;
+    background-color: #565f89;
+    color: #ffffff;
 }
 
 #pulseaudio.muted {
-    background-color: #90b1b1;
-    color: #2a5c45;
+    background-color: #444b6a;
+    color: #a9b1d6;
 }
 
 #tray {
-    background-color: #2980b9;
+    background-color: #24283b;
 }
