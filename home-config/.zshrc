@@ -222,3 +222,7 @@ export NVM_DIR="$HOME/.nvm"
 
 # ╭─ Machine Local Overrides
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
+
+
+# Added by Antigravity CLI installer
+export PATH="/home/tym/.local/bin:$PATH"
