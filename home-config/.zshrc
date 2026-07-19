@@ -41,11 +41,11 @@ plugins=(
 	zsh-vi-mode
 )
 
-# Speed up compinit by skipping timestamp checks if the cache is less than 24h old.
-for dump in ~/.zcompdump*(N.m-1); do
-	alias compinit="compinit -C"
-	break
-done
+# Speed up compinit by skipping timestamp checks if the cache is recently updated.
+# We check if the dump file exists and is not empty.
+if [[ -s "${ZSH_COMPDUMP:-$HOME/.zcompdump-${SHORT_HOST:-${HOST%%.*}}-${ZSH_VERSION}}" ]]; then
+  alias compinit="compinit -C"
+fi
 
 [[ -f "${ZSH}/oh-my-zsh.sh" ]] && source "${ZSH}/oh-my-zsh.sh"
 unalias compinit 2>/dev/null
@@ -216,9 +216,28 @@ alias b="git branch"
 # ╔══════════════════════════════════════════════════════════════════════════════╗
 # ║ 8. FINAL HOOKS                                                             ║
 # ╚══════════════════════════════════════════════════════════════════════════════╝
-# ╭─ NVM (Node Version Manager)
+# ╭─ NVM (Node Version Manager) - Lazy Loaded
 export NVM_DIR="$HOME/.nvm"
-[[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
+function nvm() {
+  unset -f nvm node npm npx
+  [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
+  nvm "$@"
+}
+function node() {
+  unset -f nvm node npm npx
+  [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
+  node "$@"
+}
+function npm() {
+  unset -f nvm node npm npx
+  [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
+  npm "$@"
+}
+function npx() {
+  unset -f nvm node npm npx
+  [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
+  npx "$@"
+}
 
 # ╭─ Machine Local Overrides
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local

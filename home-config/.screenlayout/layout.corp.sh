@@ -7,3 +7,4 @@ xrandr --output DisplayPort-0 --off \
 
 # Wallpaper
 feh --bg-fill ~/Pictures/Wallpapers/main.png
+

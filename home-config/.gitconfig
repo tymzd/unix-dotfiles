@@ -19,7 +19,7 @@
     autocrlf = input
 
 [color]
-	ui = always
+	ui = auto
 
 [url "git@github.com:"]
 	insteadOf = https://github.com/
