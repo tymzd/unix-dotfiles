@@ -24,3 +24,11 @@ fi
 
 # Ensure all screenlayout scripts are executable.
 chmod +x "$LAYOUT_REPO"/*.sh
+
+# Point vim/vi/editor in ~/.local/bin to Neovim if installed.
+if [ -x "/usr/bin/nvim" ]; then
+    mkdir -p "$HOME/.local/bin"
+    ln -sf /usr/bin/nvim "$HOME/.local/bin/vim"
+    ln -sf /usr/bin/nvim "$HOME/.local/bin/vi"
+    ln -sf /usr/bin/nvim "$HOME/.local/bin/editor"
+fi

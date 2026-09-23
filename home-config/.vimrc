@@ -40,19 +40,21 @@ vnoremap Y "+y
 set ttimeout
 set ttimeoutlen=50
 
-" Cursor shaping (Block in Normal, Beam in Insert)
-autocmd VimEnter * silent exec "! echo -ne '\e[1 q'"
-let &t_SI = "\e[6 q"
-let &t_EI = "\e[2 q"
-autocmd VimLeave * silent exec "! echo -ne '\e[5 q'"
+if !has('nvim')
+  " Cursor shaping (Block in Normal, Beam in Insert)
+  autocmd VimEnter * silent exec "! echo -ne '\e[1 q'"
+  let &t_SI = "\e[6 q"
+  let &t_EI = "\e[2 q"
+  autocmd VimLeave * silent exec "! echo -ne '\e[5 q'"
 
-" Advanced Auto-Paste Detection (fixes indentation issues when pasting)
-inoremap <special> <expr> <Esc>[200~ XTermPasteBegin()
-function! XTermPasteBegin()
-  set pastetoggle=<Esc>[201~
-  set paste
-  return ""
-endfunction
+  " Advanced Auto-Paste Detection (fixes indentation issues when pasting)
+  inoremap <special> <expr> <Esc>[200~ XTermPasteBegin()
+  function! XTermPasteBegin()
+    set pastetoggle=<Esc>[201~
+    set paste
+    return ""
+  endfunction
+endif
 
 
 " ╔══════════════════════════════════════════════════════════════════════════════╗

@@ -1,0 +1,205 @@
+{
+  /* ---------------------------------------------------------------------- */
+  /*                          Appearance & Themes                           */
+  /* ---------------------------------------------------------------------- */
+  "workbench.colorTheme": "Cyberpunk",
+  "workbench.preferredLightColorTheme": "Visual Studio 2019 Light",
+  "workbench.preferredDarkColorTheme": "Cyberpunk",
+  "workbench.iconTheme": "material-icon-theme",
+  "workbench.colorCustomizations": {
+    "editor.lineHighlightBackground": "#1073cf10",
+    "editor.lineHighlightBorder": "#9fced10f",
+    "editorRuler.foreground": "#88888866"
+  },
+  /* ---------------------------------------------------------------------- */
+  /*                           Window & Workbench                           */
+  /* ---------------------------------------------------------------------- */
+  "window.zoomLevel": 2,
+  "window.titleBarStyle": "custom",
+  "window.customTitleBarVisibility": "windowed",
+  "window.menuBarVisibility": "compact",
+  "window.commandCenter": false,
+  "window.confirmSaveUntitledWorkspace": false,
+  "workbench.startupEditor": "none",
+  "workbench.activityBar.location": "hidden",
+  "workbench.secondarySideBar.defaultVisibility": "hidden",
+  "workbench.layoutControl.enabled": false,
+  "workbench.list.smoothScrolling": true,
+  "workbench.list.openMode": "doubleClick",
+  "workbench.tree.indent": 16,
+  "workbench.editor.titleScrollbarSizing": "large",
+  "workbench.editorAssociations": {
+    "*.ipynb": "jupyter.notebook.ipynb"
+  },
+  "zenMode.fullScreen": false,
+  "zenMode.centerLayout": true,
+  "zenMode.restore": true,
+  "breadcrumbs.enabled": true,
+  "breadcrumbs.icons": false,
+  "outline.icons": false,
+  "explorer.confirmDelete": false,
+  "explorer.confirmDragAndDrop": false,
+  "explorer.compactFolders": false,
+  /* ---------------------------------------------------------------------- */
+  /*                                 Editor                                 */
+  /* ---------------------------------------------------------------------- */
+  "editor.smoothScrolling": true,
+  "editor.minimap.enabled": false,
+  "editor.stickyScroll.enabled": false,
+  "editor.wordWrap": "off",
+  "diffEditor.wordWrap": "off",
+  "editor.rulers": [
+    80
+  ],
+  "editor.guides.indentation": false,
+  "editor.guides.bracketPairs": false,
+  "editor.inlayHints.enabled": "on",
+  "editor.autoClosingBrackets": "always",
+  "editor.detectIndentation": false,
+  "editor.trimAutoWhitespace": true,
+  "editor.formatOnPaste": false,
+  "editor.formatOnType": false,
+  "editor.suggestSelection": "first",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "prettier.tabWidth": 4,
+  /* ---------------------------------------------------------------------- */
+  /*                                Terminal                                */
+  /* ---------------------------------------------------------------------- */
+  "terminal.integrated.tabs.enabled": false,
+  "terminal.integrated.enableMultiLinePasteWarning": false,
+  "terminal.integrated.persistentSessionReviveProcess": "never",
+  "terminal.integrated.suggest.quickSuggestions": {
+    "commands": "on",
+    "arguments": "off",
+    "unknown": "off"
+  },
+  /* ---------------------------------------------------------------------- */
+  /*                              Vim & Input                               */
+  /* ---------------------------------------------------------------------- */
+  "keyboard.dispatch": "keyCode",
+  "vim.foldfix": true,
+  "vim.smartRelativeLine": true,
+  "vim.gdefault": true,
+  "vim.statusBarColorControl": false,
+  "vim.handleKeys": {
+    "<C-c>": false,
+    "<C-v>": false,
+    "<C-x>": false,
+    "<C-w>": false,
+    "<C-f>": false,
+    "<C-n>": false,
+    "<C-t>": false,
+    "<C-p>": false
+  },
+  "extensions.experimental.affinity": {
+    "vscodevim.vim": 1,
+    "asvetliakov.vscode-neovim": 1
+  },
+  /* ---------------------------------------------------------------------- */
+  /*                           Files & Languages                            */
+  /* ---------------------------------------------------------------------- */
+  "files.exclude": {
+    "**/.classpath": true,
+    "**/.project": true,
+    "**/.settings": true,
+    "**/.factorypath": true
+  },
+  "files.associations": {
+    "*.mdx": "markdown",
+    "*.ddl": "sql"
+  },
+  "[go]": {
+    "editor.defaultFormatter": "golang.go",
+    "editor.formatOnSave": false
+  },
+  "go.toolsManagement.autoUpdate": true,
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.autopep8"
+  },
+  "python.analysis.typeCheckingMode": "basic",
+  "[rust]": {
+    "editor.defaultFormatter": "rust-lang.rust-analyzer"
+  },
+  "[cpp]": {
+    "editor.defaultFormatter": "xaver.clang-format"
+  },
+  "C_Cpp.updateChannel": "Insiders",
+  "C_Cpp.default.compilerPath": "/usr/bin/g++",
+  "C_Cpp.default.compilerArgs": [
+    "-std=c++2a"
+  ],
+  "C_Cpp.copilotHover": "disabled",
+  "cmake.configureOnOpen": false,
+  "[javascript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+  },
+  "[json]": {
+    "editor.quickSuggestions": {
+      "strings": true
+    },
+    "editor.suggest.insertMode": "replace",
+    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "mervin.markdown-formatter",
+    "editor.formatOnSave": false
+  },
+  "[mdx]": {
+    "editor.formatOnSave": false
+  },
+  "[dart]": {
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "editor.rulers": [
+      80
+    ],
+    "editor.selectionHighlight": false,
+    "editor.suggest.snippetsPreventQuickSuggestions": false,
+    "editor.suggestSelection": "first",
+    "editor.tabCompletion": "onlySnippets",
+    "editor.wordBasedSuggestions": "off"
+  },
+  /* ---------------------------------------------------------------------- */
+  /*                           Git & Integrations                           */
+  /* ---------------------------------------------------------------------- */
+  "git.confirmSync": false,
+  "git.autofetch": true,
+  "git.terminalAuthentication": false,
+  "git.blame.editorDecoration.enabled": true,
+  "gitlens.ai.model": "vscode",
+  "gitlens.ai.vscode.model": "copilot:gpt-4.1",
+  /* ---------------------------------------------------------------------- */
+  /*                         Extensions & Misc                              */
+  /* ---------------------------------------------------------------------- */
+  "debug.toolBarLocation": "docked",
+  "debug.showBreakpointsInOverviewRuler": true,
+  "security.workspace.trust.untrustedFiles": "open",
+  "update.mode": "none",
+  "cSpell.enabled": false,
+  "cSpell.language": "en-GB",
+  "cSpell.enableFiletypes": [
+    "!javascript",
+    "!typescriptreact",
+    "mdx"
+  ],
+  "ltex.language": "en-GB",
+  "csharp.suppressDotnetInstallWarning": true,
+  "redhat.telemetry.enabled": false,
+  "prisma.showPrismaDataPlatformNotification": false,
+  "hediet.vscode-drawio.resizeImages": null,
+  "docker.extension.enableComposeLanguageServer": false,
+  "geminicodeassist.recitation.maxCitedLength": 0,
+  "chat.agent.enabled": false,
+  "chat.notifyWindowOnConfirmation": "off",
+  "chat.commandCenter.enabled": false,
+  "editor.formatOnSave": false
+}

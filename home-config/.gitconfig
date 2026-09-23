@@ -14,6 +14,7 @@
 # ║ 2. CORE SETTINGS                                                           ║
 # ╚══════════════════════════════════════════════════════════════════════════════╝
 [core]
+	editor = nvim
 	pager = delta
 	excludesfile = ~/.gitignore_global
     autocrlf = input

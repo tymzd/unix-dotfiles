@@ -2,8 +2,9 @@
 # ║ 1. PATH & ENVIRONMENT VARIABLES                                            ║
 # ╚══════════════════════════════════════════════════════════════════════════════╝
 export PATH="${HOME}/Scripts:${HOME}/.local/bin:${PATH}"
-export EDITOR='vim'
-export MANPAGER='vim -M +MANPAGER -'
+export EDITOR='nvim'
+export VISUAL='nvim'
+export MANPAGER='nvim +Man!'
 export LESS="-R"
 
 # Language Specifics
@@ -114,7 +115,6 @@ if [[ "$USER" == "timzh" ]]; then
     alias sites='code ~/sites'
 fi
 
-
 # ╔══════════════════════════════════════════════════════════════════════════════╗
 # ║ 5. UTILITY FUNCTIONS (Base64, Hex, Hashes)                                 ║
 # ╚══════════════════════════════════════════════════════════════════════════════╝
@@ -197,8 +197,11 @@ fi
 alias ls='ls --color=auto'
 alias notify="notify-send"
 alias less='less -N'
+alias vim='nvim'
+alias vi='nvim'
 alias zshconf='$EDITOR ~/.zshrc'
-alias vimconf='$EDITOR ~/.vimrc'
+alias vimconf='$EDITOR ~/.config/nvim/init.lua'
+alias nvimconf='$EDITOR ~/.config/nvim/init.lua'
 alias fix="eval $(ssh-agent -s)"
 
 # ╭─ System Management
@@ -211,6 +214,7 @@ alias a="git commit --amend"
 alias p="git pull"
 alias u="git push"
 alias b="git branch"
+
 
 
 # ╔══════════════════════════════════════════════════════════════════════════════╗
