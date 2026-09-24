@@ -50,10 +50,6 @@
         "when": "editorTextFocus && !editorReadonly && vim.active"
     },
     {
-        "key": "alt+b",
-        "command": "workbench.debug.viewlet.action.removeAllBreakpoints"
-    },
-    {
         "key": "ctrl+j",
         "command": "selectNextSuggestion",
         "when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus"
@@ -122,12 +118,6 @@
     {
         "key": "ctrl+k z",
         "command": "-workbench.action.toggleZenMode"
-    },
-    // Remove all breakpoints.
-    // https://stackoverflow.com/questions/59320880/command-to-clear-all-breakpoints-in-vscode-as-in-visual-studio
-    {
-        "key": "alt+b",
-        "command": "workbench.debug.viewlet.action.removeAllBreakpoints"
     },
     // Resize the integrated terminal windows with Vim keybindings!
     {
@@ -724,5 +714,60 @@
         "key": "ctrl+j",
         "command": "workbench.action.terminal.focusNextPane",
         "when": "terminalFocus && terminalHasBeenCreated || terminalFocus && terminalProcessSupported"
+    },
+    // Debugging with Vim-style hjkl keybindings (active only while paused in debugger)
+    {
+        "key": "alt+b",
+        "command": "editor.debug.action.toggleBreakpoint"
+    },
+    {
+        "key": "alt+shift+b",
+        "command": "workbench.debug.viewlet.action.removeAllBreakpoints"
+    },
+    {
+        "key": "alt+j",
+        "command": "workbench.action.debug.stepOver",
+        "when": "debugState == 'stopped' && !terminalFocus"
+    },
+    {
+        "key": "alt+l",
+        "command": "workbench.action.debug.stepInto",
+        "when": "debugState == 'stopped' && !terminalFocus"
+    },
+    {
+        "key": "alt+h",
+        "command": "workbench.action.debug.stepOut",
+        "when": "debugState == 'stopped' && !terminalFocus"
+    },
+    {
+        "key": "alt+k",
+        "command": "workbench.action.debug.continue",
+        "when": "debugState == 'stopped' && !terminalFocus"
+    },
+    {
+        "key": "alt+c",
+        "command": "workbench.action.debug.continue",
+        "when": "inDebugMode"
+    },
+    {
+        "key": "alt+q",
+        "command": "workbench.action.debug.stop",
+        "when": "inDebugMode"
+    },
+    // Move the entire panel (Terminal, Debug Console, Output, Problems) to the right or back to bottom when focused in the panel
+    {
+        "key": "shift+alt+l",
+        "command": "workbench.action.positionPanelRight",
+        "when": "terminalFocus || panelFocus"
+    },
+    {
+        "key": "shift+alt+h",
+        "command": "workbench.action.positionPanelBottom",
+        "when": "terminalFocus || panelFocus"
+    },
+    {
+        "key": "shift+alt+j",
+        "command": "workbench.action.positionPanelBottom",
+        "when": "terminalFocus || panelFocus"
     }
 ]

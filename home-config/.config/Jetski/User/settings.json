@@ -75,6 +75,11 @@
     "arguments": "off",
     "unknown": "off"
   },
+  "terminal.integrated.commandsToSkipShell": [
+    "workbench.action.positionPanelRight",
+    "workbench.action.positionPanelBottom",
+    "workbench.action.positionPanelLeft"
+  ],
   /* ---------------------------------------------------------------------- */
   /*                              Vim & Input                               */
   /* ---------------------------------------------------------------------- */
@@ -115,6 +120,9 @@
     "editor.formatOnSave": true
   },
   "go.toolsManagement.autoUpdate": true,
+  "go.alternateTools": {
+    "dlv": "/usr/bin/dlv"
+  },
   "[python]": {
     "editor.defaultFormatter": "ms-python.autopep8"
   },
