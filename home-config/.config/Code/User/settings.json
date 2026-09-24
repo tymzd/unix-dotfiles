@@ -35,6 +35,7 @@
   "zenMode.fullScreen": false,
   "zenMode.centerLayout": true,
   "zenMode.restore": true,
+  "zenMode.hideLineNumbers": false,
   "breadcrumbs.enabled": true,
   "breadcrumbs.icons": false,
   "outline.icons": false,
@@ -45,6 +46,7 @@
   /* ---------------------------------------------------------------------- */
   /*                                 Editor                                 */
   /* ---------------------------------------------------------------------- */
+  "editor.lineNumbers": "relative",
   "editor.smoothScrolling": true,
   "editor.minimap.enabled": false,
   "editor.stickyScroll.enabled": false,
