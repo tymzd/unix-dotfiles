@@ -96,6 +96,17 @@
   "vim.smartRelativeLine": true,
   "vim.gdefault": true,
   "vim.statusBarColorControl": false,
+  // Briefly flash the text that was just yanked.
+  "vim.highlightedyank.enable": true,
+  // <leader>w / <leader>b / <leader>e move by camelCase / snake_case word
+  // parts (e.g. "fooBarBaz": w stops at Bar, Baz). Also works as a text
+  // object: ci<leader>w changes just one part. Normal mode only in practice:
+  // in visual mode, space is taken by the chords in keybindings.json.
+  "vim.camelCaseMotion.enable": true,
+  // Sneak: s{c}{c} / S{c}{c} jump forward/back to the next 2-char match
+  // (across lines); ; and , repeat. With an operator use z/Z (dz{c}{c}).
+  // Replaces built-in s (use cl instead). Plain f/t/F/T are unchanged.
+  "vim.sneak": true,
   "vim.handleKeys": {
     "<C-c>": false,
     "<C-v>": false,
@@ -125,6 +136,17 @@
   // See the comment block in keybindings.json for the full list of quirks.
   "vim.visualModeKeyBindingsNonRecursive": [
     { "before": ["<leader>", "a"], "commands": ["editor.action.selectHighlights"] }
+  ],
+  // Visual-mode p/P paste over the selection WITHOUT overwriting the register
+  // with the replaced text, so you can yank once and paste over many things.
+  // Implemented via replaceWithRegister's gr (must be a *recursive* remap so
+  // gr resolves to the plugin). Normal-mode p/P never touch the register, so
+  // they're left alone. Use "_ or "0 explicitly if you ever need otherwise.
+  // Side effect: gr{motion} / grr in normal mode also replace with register.
+  "vim.replaceWithRegister": true,
+  "vim.visualModeKeyBindings": [
+    { "before": ["p"], "after": ["g", "r"] },
+    { "before": ["P"], "after": ["g", "r"] }
   ],
   "extensions.experimental.affinity": {
     "vscodevim.vim": 1,
