@@ -188,7 +188,7 @@ else
     alias picomconf='$EDITOR ~/.config/picom/picom.conf'
     alias polybarconf='$EDITOR ~/.config/polybar/config.ini'
     
-    if command -v setxkbmap >/dev/null; then
+    if [[ -n "$DISPLAY" ]] && command -v setxkbmap >/dev/null; then
         setxkbmap -option caps:swapescape
     fi
 fi

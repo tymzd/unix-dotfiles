@@ -82,3 +82,4 @@
             i=$((i+1)); \
         done; \
     }; f"
+	fh = log --follow --format='%C(yellow)%h%Creset %C(green)%ad%Creset %C(blue)%an%Creset  %s' --date=short --

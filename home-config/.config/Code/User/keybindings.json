@@ -181,20 +181,9 @@
         "command": "workbench.action.terminal.scrollDown",
         "when": "terminalFocus && terminalHasBeenCreated && !terminalAltBufferActive || terminalFocus && terminalProcessSupported && !terminalAltBufferActive"
     },
-    // Focus on the next terminal in the integrated terminal group with vim keybindings.
-    {
-        "key": "ctrl+l",
-        "command": "workbench.action.terminal.focusNextPane",
-        "when": "terminalFocus && terminalHasBeenCreated || terminalFocus && terminalProcessSupported"
-    },
     {
         "key": "alt+down",
         "command": "-workbench.action.terminal.focusNextPane",
-        "when": "terminalFocus && terminalHasBeenCreated || terminalFocus && terminalProcessSupported"
-    },
-    {
-        "key": "ctrl+h",
-        "command": "workbench.action.terminal.focusPreviousPane",
         "when": "terminalFocus && terminalHasBeenCreated || terminalFocus && terminalProcessSupported"
     },
     {
@@ -248,6 +237,12 @@
     },
     // Vim hjlk navigation between different panes (including going from editor
     // to terminal)!
+    // i3-style: these move focus spatially everywhere, INCLUDING from the
+    // terminal back to the editor (e.g. terminal on the right: ctrl+l in,
+    // ctrl+h out; terminal below: ctrl+j in, ctrl+k out). To make that work,
+    // the old terminal-only ctrl+hjkl bindings that cycled between split
+    // terminal panes (workbench.action.terminal.focusNext/PreviousPane) were
+    // removed, as was the "!terminalFocus" condition on ctrl+h/ctrl+l.
     {
         "key": "ctrl+k",
         "command": "workbench.action.navigateUp",
@@ -255,18 +250,45 @@
     },
     {
         "key": "ctrl+h",
-        "command": "workbench.action.navigateLeft",
-        "when": "!terminalFocus"
+        "command": "workbench.action.navigateLeft"
     },
     {
         "key": "ctrl+l",
-        "command": "workbench.action.navigateRight",
-        "when": "!terminalFocus "
+        "command": "workbench.action.navigateRight"
     },
     {
         "key": "ctrl+j",
         "command": "workbench.action.navigateDown",
         "when": "!suggestWidgetMultipleSuggestions && !suggestWidgetVisible"
+    },
+    // Move between split terminals, depending on where the terminal lives.
+    // Must come AFTER the navigate* bindings above to win. Anything not
+    // matched here falls through to navigate*, i.e. leaves the terminal.
+    // - Terminal beside the editor (secondary side bar, or the panel moved to
+    //   the left/right; splits stacked): ctrl+j/k cycle splits, ctrl+h/l exit.
+    // - Terminal in the bottom panel (splits side by side): ctrl+h/l cycle
+    //   splits, ctrl+k exits up to the editor.
+    // Cycling wraps around at the first/last split. If bindings seem stale
+    // after editing, run Developer: Reload Window.
+    {
+        "key": "ctrl+k",
+        "command": "workbench.action.terminal.focusPreviousPane",
+        "when": "terminalFocus && (!panelFocus || panelPosition != 'bottom')"
+    },
+    {
+        "key": "ctrl+j",
+        "command": "workbench.action.terminal.focusNextPane",
+        "when": "terminalFocus && (!panelFocus || panelPosition != 'bottom')"
+    },
+    {
+        "key": "ctrl+h",
+        "command": "workbench.action.terminal.focusPreviousPane",
+        "when": "terminalFocus && panelFocus && terminalSplitPaneActive && panelPosition == 'bottom'"
+    },
+    {
+        "key": "ctrl+l",
+        "command": "workbench.action.terminal.focusNextPane",
+        "when": "terminalFocus && panelFocus && terminalSplitPaneActive && panelPosition == 'bottom'"
     },
     // Quickly open up VSCode's keybindings management UI.
     {
@@ -571,10 +593,6 @@
         "when": "editorTextFocus && !editorReadonly"
     },
     {
-        "key": "ctrl+shift+a",
-        "command": "cloudcode.gemini.chatView.focus"
-    },
-    {
         "key": "ctrl+shift+g",
         "command": "workbench.view.scm"
     },
@@ -716,13 +734,76 @@
         "when": "terminalFocus && terminalHasBeenCreated || terminalFocus && terminalProcessSupported"
     },
     {
-        "key": "ctrl+k",
-        "command": "workbench.action.terminal.focusPreviousPane",
-        "when": "terminalFocus && terminalHasBeenCreated || terminalFocus && terminalProcessSupported"
+        "key": "ctrl+shift+a",
+        "command": "antigravity.panel.focus"
     },
     {
-        "key": "ctrl+j",
-        "command": "workbench.action.terminal.focusNextPane",
-        "when": "terminalFocus && terminalHasBeenCreated || terminalFocus && terminalProcessSupported"
+        "key": "alt+l",
+        "command": "antigravity.insertSnippet",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+l",
+        "command": "-antigravity.insertSnippet",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "alt+l",
+        "command": "antigravity.insertTerminalSnippet",
+        "when": "false"
+    },
+    {
+        "key": "ctrl+l",
+        "command": "-antigravity.insertTerminalSnippet",
+        "when": "false"
+    },
+    {
+        "key": "ctrl+g",
+        "command": "gitlens.toggleFileChanges"
+    },
+    // ---------------------------------------------------------------------
+    // Vim visual-mode multi-cursor bindings (VSCodeVim)
+    // ---------------------------------------------------------------------
+    // space+A (visual mode): put a cursor at the end of every selected line
+    //   and drop to normal mode with all cursors kept. Usage: V, jjj, space A,
+    //   then any normal-mode command applies to every line (^ to jump all
+    //   cursors to line start). Esc in normal mode collapses to one cursor.
+    // space+a (visual mode): select all matches of the selection (see the
+    //   <leader>a notes in settings.json).
+    //
+    // Quirks / why it's built this way:
+    // - These live here, not in vim.visualModeKeyBindingsNonRecursive, because
+    //   VSCodeVim restores the visual selection after its own remaps, wiping
+    //   any cursors the command created.
+    // - Because "space" is a chord prefix here in visual mode, VSCodeVim never
+    //   sees space in visual mode: its visual <leader> remaps (e.g. <leader>a)
+    //   are dead, hence space+a is duplicated here. Bare space (move right)
+    //   also no longer works in visual mode. Normal mode is unaffected.
+    // - Vim's own visual-block I/A collapse to one cursor on Esc (VSCodeVim
+    //   marks them as "fake" multi-cursors), which is why this exists.
+    // - After the cursors are created, VSCodeVim is still in VisualLine mode
+    //   and redraws each cursor as a full-line selection. The <Esc> is sent
+    //   via "vim.remap" (not extension.vim_escape) so it goes through
+    //   VSCodeVim's task queue *after* it has picked up the new cursors;
+    //   otherwise the old selection reappears.
+    // - Any cursor movement done in the same sequence (e.g. cursorHome / ^ to
+    //   land at line start) gets overwritten by that redraw, so a space+I
+    //   "line start" variant was dropped. Just press ^ afterwards.
+    // - VS Code has no "add cursor at start of each line" command, only
+    //   editor.action.insertCursorAtEndOfEachLineSelected (shift+alt+i by
+    //   default, which is rebound to GitLens above).
+    {
+        "key": "space shift+a",
+        "command": "runCommands",
+        "args": { "commands": [
+            "editor.action.insertCursorAtEndOfEachLineSelected",
+            { "command": "vim.remap", "args": { "after": ["<Esc>"] } }
+        ] },
+        "when": "editorTextFocus && vim.active && vim.mode =~ /^Visual/"
+    },
+    {
+        "key": "space a",
+        "command": "editor.action.selectHighlights",
+        "when": "editorTextFocus && vim.active && vim.mode =~ /^Visual/"
     }
 ]

@@ -2,14 +2,25 @@
   /* ---------------------------------------------------------------------- */
   /*                          Appearance & Themes                           */
   /* ---------------------------------------------------------------------- */
-  "workbench.colorTheme": "Cyberpunk",
+  "workbench.colorTheme": "Default High Contrast",
   "workbench.preferredLightColorTheme": "Visual Studio 2019 Light",
   "workbench.preferredDarkColorTheme": "Cyberpunk",
   "workbench.iconTheme": "material-icon-theme",
   "workbench.colorCustomizations": {
     "editor.lineHighlightBackground": "#1073cf10",
     "editor.lineHighlightBorder": "#9fced10f",
-    "editorRuler.foreground": "#88888866"
+    "editorRuler.foreground": "#88888866",
+    "[Default High Contrast][Dark High Contrast]": {
+      "contrastActiveBorder": "#ffffff",
+      "contrastBorder": "#33464d",
+      "focusBorder": "#ffffff",
+      // Remaining keys whose High Contrast default is orange (#f38518).
+      "editor.lineHighlightBorder": "#33464d",
+      "listFilterWidget.outline": "#33464d",
+      "terminal.findMatchBorder": "#33464d",
+      "terminal.findMatchHighlightBorder": "#33464d",
+      "terminalOverviewRuler.findMatchForeground": "#33464d"
+    }
   },
 
   /* ---------------------------------------------------------------------- */
@@ -95,6 +106,26 @@
     "<C-t>": false,
     "<C-p>": false
   },
+  // Use space as the Vim leader key. <leader>a (space+a) selects all
+  // occurrences of the word under the cursor / visual selection with multiple
+  // cursors (like 'gb', but for every match at once). Then 'c' to replace.
+  // Case sensitivity: with a visual selection, matching follows the find
+  // widget's "Match Case" toggle (ctrl+f, then alt+c / the 'Aa' button;
+  // alt+w for whole word). With no selection (word under cursor), it's always
+  // case-sensitive and whole-word.
+  "vim.leader": "<space>",
+  "vim.normalModeKeyBindingsNonRecursive": [
+    { "before": ["<leader>", "a"], "commands": ["editor.action.selectHighlights"] }
+  ],
+  // Visual mode: <leader>a and <leader>A (cursor at end of every selected
+  // line) are defined in keybindings.json as "space" chords, because
+  // VSCodeVim remaps restore the visual selection and wipe new cursors. That
+  // chord swallows space in visual mode, so the visual <leader>a entry below
+  // is effectively dead; it's kept as a fallback if the chords are removed.
+  // See the comment block in keybindings.json for the full list of quirks.
+  "vim.visualModeKeyBindingsNonRecursive": [
+    { "before": ["<leader>", "a"], "commands": ["editor.action.selectHighlights"] }
+  ],
   "extensions.experimental.affinity": {
     "vscodevim.vim": 1,
     "asvetliakov.vscode-neovim": 1
@@ -176,9 +207,7 @@
   "git.confirmSync": false,
   "git.autofetch": true,
   "git.terminalAuthentication": false,
-  "git.blame.editorDecoration.enabled": true,
-  "gitlens.ai.model": "vscode",
-  "gitlens.ai.vscode.model": "copilot:gpt-4.1",
+"git.blame.editorDecoration.enabled": false,
 
   /* ---------------------------------------------------------------------- */
   /*                         Extensions & Misc                              */
@@ -203,5 +232,7 @@
   "geminicodeassist.recitation.maxCitedLength": 0,
   "chat.agent.enabled": false,
   "chat.notifyWindowOnConfirmation": "off",
-  "chat.commandCenter.enabled": false
+"chat.commandCenter.enabled": false,
+"workbench.browser.showInTitleBar": false,
+"workbench.browser.searchEngine": "google"
 }
