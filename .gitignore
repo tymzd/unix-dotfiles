@@ -31,3 +31,6 @@ home-config/.config/mimeapps.list
 home-config/.config/obsidian/
 .vim/
 
+
+# Built VS Code extension packages
+*.vsix

@@ -681,13 +681,46 @@
         "key": "ctrl+alt+left",
         "command": "-workbench.action.moveEditorToPreviousGroup"
     },
+    // ---------------------------------------------------------------------
+    // Open Gerrit (sos-review) in VS Code's integrated Simple Browser.
+    // ---------------------------------------------------------------------
+    // shift+alt+i: current file (+ selected lines) on the remote.
+    // shift+alt+r: current line's commit on the remote.
+    // ctrl+shift+alt+g: the sos Gerrit dashboard.
+    //
+    // Why it's built this way:
+    // - gitlens.openFileOnRemote / openCommitOnRemote always go through
+    //   VS Code's "open external" path, i.e. the system browser. The
+    //   workbench.externalUriOpeners setting can't redirect them because the
+    //   Simple Browser only accepts localhost URLs as an external opener.
+    // - So instead: GitLens copies the URL to the clipboard, then
+    //   sos.openClipboardInSimpleBrowser (a tiny personal extension, source in
+    //   vscode-extensions/open-clipboard-in-simple-browser/ in the dotfiles
+    //   repo) opens the clipboard URL via simpleBrowser.show. Side effect: the
+    //   URL is left on the clipboard.
+    // - When using Remote-SSH, keybindings are read from the *client*
+    //   machine's keybindings.json, while the extension must be installed on
+    //   the remote (next to GitLens). See the extension's README.
     {
         "key": "shift+alt+i",
-        "command": "gitlens.openFileOnRemote"
+        "command": "runCommands",
+        "args": { "commands": [
+            "gitlens.copyRemoteFileUrlToClipboard",
+            "sos.openClipboardInSimpleBrowser"
+        ] }
     },
     {
         "key": "shift+alt+r",
-        "command": "gitlens.openCommitOnRemote"
+        "command": "runCommands",
+        "args": { "commands": [
+            "gitlens.copyRemoteCommitUrl",
+            "sos.openClipboardInSimpleBrowser"
+        ] }
+    },
+    {
+        "key": "ctrl+shift+alt+g",
+        "command": "simpleBrowser.show",
+        "args": "https://sos-review.git.corp.google.com"
     },
     {
         "key": "ctrl+tab",

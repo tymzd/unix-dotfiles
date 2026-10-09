@@ -1,0 +1,20 @@
+{
+  "name": "open-clipboard-in-simple-browser",
+  "displayName": "Open Clipboard URL in Simple Browser",
+  "description": "Opens the URL on the clipboard in VS Code's integrated Simple Browser.",
+  "version": "0.0.1",
+  "publisher": "timzh",
+  "license": "UNLICENSED",
+  "engines": { "vscode": "^1.80.0" },
+  "extensionKind": ["workspace", "ui"],
+  "main": "./extension.js",
+  "activationEvents": [],
+  "contributes": {
+    "commands": [
+      {
+        "command": "sos.openClipboardInSimpleBrowser",
+        "title": "Open Clipboard URL in Simple Browser"
+      }
+    ]
+  }
+}
