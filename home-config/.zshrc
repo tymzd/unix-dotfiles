@@ -340,9 +340,31 @@ alias syncdotfiles='stow --target=$HOME --adopt --dir ~/unix-dotfiles home-confi
 alias s="git status"
 alias c="git commit -m "
 alias a="git commit --amend"
-alias p="git pull"
-alias u="git push"
 alias b="git branch"
+# p / u: pull and push, using the Gerrit workflow in Gerrit repos (sso:// or
+# *.googlesource.com origin) and plain `git pull` / `git push` everywhere
+# else (GitHub etc). Extra args pass through, e.g. `u -o topic=foo` or
+# `u --force-with-lease`.
+# (`function p` rather than `p()` so re-sourcing while the old `p`/`u`
+#  aliases are still defined doesn't trip zsh's alias expansion.)
+function _is_gerrit_repo {
+    local url=$(git remote get-url origin 2>/dev/null)
+    [[ $url == sso://* || $url == *.googlesource.com* ]]
+}
+function p {
+    if _is_gerrit_repo; then
+        git pull origin main --rebase "$@"
+    else
+        git pull "$@"
+    fi
+}
+function u {
+    if _is_gerrit_repo; then
+        git push origin HEAD:refs/for/main "$@"
+    else
+        git push "$@"
+    fi
+}
 
 
 
