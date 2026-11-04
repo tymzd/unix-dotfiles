@@ -83,5 +83,6 @@
         done; \
     }; f"
 	fh = log --follow --format='%C(yellow)%h%Creset %C(green)%ad%Creset %C(blue)%an%Creset  %s' --date=short --
+	wt = worktree
 [http]
 	cookiefile = /usr/local/google/home/timzh/.gitcookies

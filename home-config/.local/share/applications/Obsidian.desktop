@@ -1,8 +1,10 @@
 [Desktop Entry]
 Name=Obsidian
 Type=Application
-Categories=Office
+Categories=Office;
 Comment=Obsidian - a powerful note-taking app
-Icon=/home/tym/AppImages/obsidian.png
-Exec=/home/tym/AppImages/Obsidian.AppImage
-
+Icon=obsidian
+Exec=sh -c "PATH=\\"\\$HOME/bin:\\$PATH\\" exec obsidian \\"\\$@\\"" obsidian %U
+Terminal=false
+StartupWMClass=obsidian
+MimeType=x-scheme-handler/obsidian;

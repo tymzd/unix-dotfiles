@@ -5,11 +5,6 @@
         "command": "workbench.action.toggleLightDarkThemes",
         "when": "!terminalFocus"
     },
-    // Spotify controls
-    {
-        "key": "ctrl+shift+q",
-        "command": "spotify.playPause"
-    },
     // Emulating browser tab switching shortcuts: ctrl+tab and ctrl+shift+tab
     {
         "key": "ctrl+tab",
