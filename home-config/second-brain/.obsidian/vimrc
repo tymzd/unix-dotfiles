@@ -1,0 +1,91 @@
+" Obsidian vimrc, loaded by the "Vimrc Support" community plugin
+" (obsidian-vimrc-support). Mirrors ~/.vimrc and the VSCodeVim settings in
+" ~/.config/Code/User/settings.json where Obsidian's CodeMirror Vim allows it.
+"
+" Syntax notes:
+" - Only mapping commands, `set`, `exmap`, `obcommand` etc. are supported.
+" - `exmap <name> obcommand <command-id>` creates an ex command that runs an
+"   Obsidian command. Run `:obcommand` with no args to list every command ID
+"   in the developer console (ctrl+shift+i).
+" - Comment lines must start with ". Trailing comments aren't supported.
+
+" ╔══════════════════════════════════════════════════════════════════════════╗
+" ║ 1. CLIPBOARD                                                             ║
+" ╚══════════════════════════════════════════════════════════════════════════╝
+" Use the system clipboard for yanks/pastes (like `clipboard=unnamedplus`).
+set clipboard=unnamed
+
+" Same ctrl+c/x/v behaviour as ~/.vimrc.
+vmap <C-c> y
+vmap <C-x> d
+nmap <C-v> p
+" Quick yank to system clipboard.
+vmap Y y
+
+" ╔══════════════════════════════════════════════════════════════════════════╗
+" ║ 2. MOVEMENT                                                              ║
+" ╚══════════════════════════════════════════════════════════════════════════╝
+" Notes are soft-wrapped, so move by visual line instead of by paragraph.
+nmap j gj
+nmap k gk
+vmap j gj
+vmap k gk
+
+" ╔══════════════════════════════════════════════════════════════════════════╗
+" ║ 3. "LSP-LIKE" NAVIGATION (links are the definitions/references of notes) ║
+" ╚══════════════════════════════════════════════════════════════════════════╝
+" gd: go to definition -> follow the link under the cursor (VSCodeVim's gd).
+exmap followlink obcommand editor:follow-link
+nmap gd :followlink<CR>
+" gD: open the link in a new split (like "Open to the side").
+exmap followlinksplit obcommand editor:open-link-in-new-split
+nmap gD :followlinksplit<CR>
+" (Go to references -> backlinks is alt+r in hotkeys.json, as in VS Code.
+" `gr` is left alone since it's replaceWithRegister in VSCodeVim.)
+" ctrl+o / ctrl+i: jump back/forward through note history (like the jumplist).
+exmap back obcommand app:go-back
+exmap forward obcommand app:go-forward
+nmap <C-o> :back<CR>
+nmap <C-i> :forward<CR>
+
+" ╔══════════════════════════════════════════════════════════════════════════╗
+" ║ 4. TABS & FOLDS                                                          ║
+" ╚══════════════════════════════════════════════════════════════════════════╝
+" gt / gT: next/previous tab, like Vim (and VSCodeVim).
+exmap tabnext obcommand workspace:next-tab
+exmap tabprev obcommand workspace:previous-tab
+nmap gt :tabnext<CR>
+nmap gT :tabprev<CR>
+
+" Vim fold keys, backed by Obsidian's heading/list folding.
+exmap togglefold obcommand editor:toggle-fold
+exmap foldall obcommand editor:fold-all
+exmap unfoldall obcommand editor:unfold-all
+exmap foldmore obcommand editor:fold-more
+exmap foldless obcommand editor:fold-less
+nmap za :togglefold<CR>
+nmap zc :foldmore<CR>
+nmap zo :foldless<CR>
+nmap zM :foldall<CR>
+nmap zR :unfoldall<CR>
+
+" ╔══════════════════════════════════════════════════════════════════════════╗
+" ║ 5. LEADER (space), as in VSCodeVim                                       ║
+" ╚══════════════════════════════════════════════════════════════════════════╝
+" CodeMirror Vim has no `mapleader`, so free up <Space> and map it directly.
+unmap <Space>
+
+" <Space>f: find a note (ctrl+p), <Space>/: search the vault (ctrl+shift+f).
+exmap quickopen obcommand switcher:open
+exmap searchvault obcommand global-search:open
+nmap <Space>f :quickopen<CR>
+nmap <Space>/ :searchvault<CR>
+" <Space>e: reveal the current note in the file explorer.
+exmap reveal obcommand file-explorer:reveal-active-file
+nmap <Space>e :reveal<CR>
+" <Space>o: outline of the current note (like "Go to symbol").
+exmap outline obcommand outline:open
+nmap <Space>o :outline<CR>
+" <Space>x: toggle a checkbox.
+exmap togglecheck obcommand editor:toggle-checklist-status
+nmap <Space>x :togglecheck<CR>

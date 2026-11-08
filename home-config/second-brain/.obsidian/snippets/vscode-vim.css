@@ -1,0 +1,20 @@
+/*
+ * VS Code-ish editor visuals for Obsidian (enabled via appearance.json).
+ * Mirrors the VS Code settings in ~/.config/Code/User/settings.json:
+ *   - editor.lineHighlightBackground / lineHighlightBorder
+ *   - editor.rulers: [80] / vim colorcolumn=80 -> cap readable line width
+ */
+
+/* Current-line highlight (same colours as VS Code's workbench overrides). */
+.markdown-source-view.mod-cm6 .cm-active {
+  background-color: #1073cf10;
+  box-shadow: inset 0 1px 0 #9fced10f, inset 0 -1px 0 #9fced10f;
+}
+.markdown-source-view.mod-cm6 .cm-gutterElement.cm-active {
+  color: var(--text-normal);
+}
+
+/* "Readable line length" capped at ~80 columns instead of Obsidian's 700px. */
+body {
+  --file-line-width: 80ch;
+}

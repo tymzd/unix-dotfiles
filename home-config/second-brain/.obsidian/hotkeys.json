@@ -1,0 +1,76 @@
+{
+  "command-palette:open": [
+    { "modifiers": ["Mod", "Shift"], "key": "P" }
+  ],
+  "switcher:open": [
+    { "modifiers": ["Mod"], "key": "P" }
+  ],
+  "theme:toggle-light-dark": [
+    { "modifiers": ["Mod", "Shift"], "key": "L" }
+  ],
+  "editor:fold-all": [
+    { "modifiers": ["Mod", "Shift"], "key": "M" }
+  ],
+  "editor:unfold-all": [
+    { "modifiers": ["Mod", "Shift"], "key": "O" }
+  ],
+  "editor:fold-more": [
+    { "modifiers": ["Mod", "Shift"], "key": "," }
+  ],
+  "editor:fold-less": [
+    { "modifiers": ["Mod", "Shift"], "key": "I" }
+  ],
+  "editor:toggle-fold": [
+    { "modifiers": ["Mod", "Shift"], "key": "[" }
+  ],
+  "editor:swap-line-down": [
+    { "modifiers": ["Alt"], "key": "J" }
+  ],
+  "editor:swap-line-up": [
+    { "modifiers": ["Alt"], "key": "K" }
+  ],
+  "editor:focus-left": [
+    { "modifiers": ["Mod"], "key": "H" }
+  ],
+  "editor:focus-bottom": [
+    { "modifiers": ["Mod"], "key": "J" }
+  ],
+  "editor:focus-top": [
+    { "modifiers": ["Mod"], "key": "K" }
+  ],
+  "editor:focus-right": [
+    { "modifiers": ["Mod"], "key": "L" }
+  ],
+  "editor:insert-link": [],
+  "editor:open-search-replace": [],
+  "editor:toggle-checklist-status": [
+    { "modifiers": ["Mod"], "key": "ArrowUp" }
+  ],
+  "app:go-back": [
+    { "modifiers": ["Alt"], "key": "H" }
+  ],
+  "app:go-forward": [
+    { "modifiers": ["Alt"], "key": "L" }
+  ],
+  "editor:follow-link": [
+    { "modifiers": ["Alt"], "key": "I" }
+  ],
+  "backlink:open": [
+    { "modifiers": ["Alt"], "key": "R" }
+  ],
+  "app:toggle-left-sidebar": [
+    { "modifiers": ["Mod", "Shift"], "key": "B" }
+  ],
+  "app:toggle-right-sidebar": [
+    { "modifiers": ["Mod"], "key": "\\" }
+  ],
+  "file-explorer:reveal-active-file": [
+    { "modifiers": ["Mod", "Shift"], "key": "E" }
+  ],
+  "outline:open": [
+    { "modifiers": ["Mod", "Shift"], "key": "\\" }
+  ],
+  "workspace:toggle-pin": [
+    { "modifiers": ["Mod", "Shift"], "key": "X" }
+  ]
+}

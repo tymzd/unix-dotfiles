@@ -31,6 +31,10 @@ home-config/.config/mimeapps.list
 home-config/.config/obsidian/
 .vim/
 
+# Obsidian vault (~/second-brain) per-device UI state
+home-config/second-brain/.obsidian/workspace*.json
+home-config/second-brain/.obsidian/graph.json
+home-config/second-brain/.obsidian/types.json
 
 # Built VS Code extension packages
 *.vsix

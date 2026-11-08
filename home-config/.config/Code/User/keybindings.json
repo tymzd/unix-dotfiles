@@ -45,10 +45,6 @@
         "when": "editorTextFocus && !editorReadonly && vim.active"
     },
     {
-        "key": "alt+b",
-        "command": "workbench.debug.viewlet.action.removeAllBreakpoints"
-    },
-    {
         "key": "ctrl+j",
         "command": "selectNextSuggestion",
         "when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus"
@@ -118,10 +114,15 @@
         "key": "ctrl+k z",
         "command": "-workbench.action.toggleZenMode"
     },
-    // Remove all breakpoints.
+    // Breakpoints: alt+b toggles one on the current line; alt+shift+b removes
+    // all of them (the destructive one needs the extra modifier).
     // https://stackoverflow.com/questions/59320880/command-to-clear-all-breakpoints-in-vscode-as-in-visual-studio
     {
         "key": "alt+b",
+        "command": "editor.debug.action.toggleBreakpoint"
+    },
+    {
+        "key": "alt+shift+b",
         "command": "workbench.debug.viewlet.action.removeAllBreakpoints"
     },
     // Resize the integrated terminal windows with Vim keybindings!
@@ -521,18 +522,6 @@
         "key": "ctrl+9",
         "command": "workbench.action.terminal.focusAtIndex9",
         "when": "terminalFocus"
-    },
-    // I use ctrl+r in Obsidian to bring up the context menu without having to
-    // right click.
-    {
-        "key": "ctrl+r",
-        "command": "editor.action.showContextMenu",
-        "when": "textInputFocus"
-    },
-    {
-        "key": "shift+f10",
-        "command": "-editor.action.showContextMenu",
-        "when": "textInputFocus"
     },
     {
         "key": "ctrl+shift+[",

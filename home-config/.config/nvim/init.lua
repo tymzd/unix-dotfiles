@@ -30,6 +30,11 @@ end
 -- ╔══════════════════════════════════════════════════════════════════════════════╗
 -- ║ 1. BASICS & INDENTATION                                                      ║
 -- ╚══════════════════════════════════════════════════════════════════════════════╝
+-- Space as the leader key (matches VSCodeVim). Must be set before any
+-- <leader> mappings, since they capture the leader at definition time.
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+
 vim.cmd("syntax on")
 vim.cmd("filetype plugin indent on")
 
@@ -43,7 +48,8 @@ local numbertoggle = vim.api.nvim_create_augroup("numbertoggle", { clear = true 
 vim.api.nvim_create_autocmd({ "BufEnter", "FocusGained", "InsertLeave", "WinEnter" }, {
   group = numbertoggle,
   callback = function()
-    if vim.opt.number:get() and vim.api.nvim_get_mode().mode ~= "i" then
+    if vim.opt.number:get() and vim.api.nvim_get_mode().mode ~= "i"
+        and vim.bo.buftype ~= "terminal" then
       vim.opt.relativenumber = true
     end
   end,
@@ -75,6 +81,14 @@ vim.keymap.set("i", "<C-v>", "<C-r>+", { noremap = true, desc = "Paste from syst
 -- Quick yank to system clipboard
 vim.keymap.set("v", "Y", '"+y', { noremap = true, desc = "Yank to system clipboard" })
 
+-- <leader>a: multi-cursor on every match of the word under cursor / selection
+-- (vim-visual-multi; mirrors VSCodeVim's <leader>a). Then c to change all.
+vim.keymap.set("n", "<leader>a", "<Plug>(VM-Select-All)", { desc = "Select all matches" })
+vim.keymap.set("x", "<leader>a", "<Plug>(VM-Visual-All)", { desc = "Select all matches" })
+
+-- <leader>e: open the built-in netrw file explorer
+vim.keymap.set("n", "<leader>e", "<cmd>Explore<CR>", { desc = "File explorer" })
+
 
 -- ╔══════════════════════════════════════════════════════════════════════════════╗
 -- ║ 3. TERMINAL & CURSOR FIXES                                                   ║
@@ -98,7 +112,35 @@ vim.api.nvim_create_autocmd("VimLeave", {
 
 
 -- ╔══════════════════════════════════════════════════════════════════════════════╗
--- ║ 4. THEMES & VISUALS                                                          ║
+-- ║ 4. INTEGRATED TERMINAL                                                       ║
+-- ╚══════════════════════════════════════════════════════════════════════════════╝
+-- Double-Esc leaves terminal mode (a single Esc still reaches the shell)
+vim.keymap.set("t", "<Esc><Esc>", [[<C-\><C-n>]], { desc = "Exit terminal mode" })
+
+-- Ctrl+h/j/k/l moves between windows, even from inside a terminal
+for _, key in ipairs({ "h", "j", "k", "l" }) do
+  vim.keymap.set("t", "<C-" .. key .. ">", [[<C-\><C-n><C-w>]] .. key,
+    { desc = "Move to window " .. key })
+end
+
+-- Terminal buffers: no line numbers, start in insert mode
+vim.api.nvim_create_autocmd("TermOpen", {
+  group = vim.api.nvim_create_augroup("terminal_setup", { clear = true }),
+  callback = function()
+    vim.opt_local.number = false
+    vim.opt_local.relativenumber = false
+    vim.cmd("startinsert")
+  end,
+})
+
+-- <leader>t (Space then t) opens a 15-line terminal at the bottom
+vim.keymap.set("n", "<leader>t", function()
+  vim.cmd("botright 15split | terminal")
+end, { desc = "Open bottom terminal" })
+
+
+-- ╔══════════════════════════════════════════════════════════════════════════════╗
+-- ║ 5. THEMES & VISUALS                                                          ║
 -- ╚══════════════════════════════════════════════════════════════════════════════╝
 vim.opt.termguicolors = true
 vim.opt.colorcolumn = "80"
@@ -121,7 +163,7 @@ end
 
 
 -- ╔══════════════════════════════════════════════════════════════════════════════╗
--- ║ 5. MACHINE LOCAL OVERRIDES                                                   ║
+-- ║ 6. MACHINE LOCAL OVERRIDES                                                   ║
 -- ╚══════════════════════════════════════════════════════════════════════════════╝
 -- Load local config for machine-specific themes or settings
 local local_vimrc = vim.fn.expand("~/.vimrc.local")
