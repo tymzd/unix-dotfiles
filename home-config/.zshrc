@@ -317,7 +317,8 @@ else
     alias picomconf='$EDITOR ~/.config/picom/picom.conf'
     alias polybarconf='$EDITOR ~/.config/polybar/config.ini'
     
-    if [[ -n "$DISPLAY" ]] && command -v setxkbmap >/dev/null; then
+    # Skip over SSH: X forwarding sets DISPLAY to the remote (laptop) X server.
+    if [[ -n "$DISPLAY" && -z "$SSH_CONNECTION" ]] && command -v setxkbmap >/dev/null; then
         setxkbmap -option caps:swapescape
     fi
 fi
