@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+#
+# Prints "<unix_time> <branch>" for every local branch, most recently used
+# first. Used by git-lg (--all) and git-cleanup.
+#
+# "Used" is the latest of:
+#   - the last time the branch was checked out (HEAD reflog)
+#   - the last update to the branch itself (commit, amend, rebase, reset...)
+#   - the tip's commit date (fallback when there's no reflog)
+
+US=$'\x1f'
+
+# Last time each branch was checked out, from the HEAD reflog.
+declare -A last_checkout
+while IFS="$US" read -r ts msg; do
+    b=${msg##* to }
+    [ -z "${last_checkout[$b]}" ] && last_checkout[$b]=$ts
+done < <(git reflog --date=unix --format="%gd${US}%gs" HEAD 2>/dev/null |
+         grep "${US}checkout: moving from " | sed 's/^HEAD@{\([0-9]*\)}/\1/')
+
+git for-each-ref --format='%(refname:short) %(committerdate:unix)' refs/heads |
+while read -r b cdate; do
+    t=$(git reflog --date=unix --format=%gd -n 1 "refs/heads/$b" -- 2>/dev/null |
+        sed 's/.*@{\([0-9]*\)}/\1/')
+    [ -n "$t" ] && [ "$t" -gt "$cdate" ] || t=$cdate
+    c=${last_checkout[$b]:-0}
+    [ "$c" -gt "$t" ] && t=$c
+    echo "$t $b"
+done | sort -rn

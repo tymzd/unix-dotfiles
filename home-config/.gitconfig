@@ -69,19 +69,8 @@
 	ri = "!f() { git rebase --interactive HEAD~${1:-5}; }; f"
 	rc = rebase --continue
 	ra = rebase --abort
-	lg = "!f() { \
-        cd \"${GIT_PREFIX:-.}\" || exit 1; \
-        local num_lines=10; \
-        case \"$1\" in \
-            ''|*[!0-9]*) ;; \
-            *) num_lines=$1; shift ;; \
-        esac; \
-        local i=0; \
-        git log --pretty=tformat:\"%C(yellow)%h%Creset %C(green)%ad%Creset %C(bold blue)<%an>%Creset%C(red)%d%Creset %s\" --date=short --abbrev-commit --color=always -n \"$num_lines\" \"$@\" | while read -r line || [ -n \"$line\" ]; do \
-            echo \"  ~$i $line\" | sed \"s/%P(i)/$i/\"; \
-            i=$((i+1)); \
-        done; \
-    }; f"
+	cp = cherry-pick
+	# lg: see ~/Scripts/git-lg (terminal-width aware)
 	fh = log --follow --format='%C(yellow)%h%Creset %C(green)%ad%Creset %C(blue)%an%Creset  %s' --date=short --
 	wt = worktree
 [http]

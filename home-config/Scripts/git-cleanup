@@ -1,0 +1,134 @@
+#!/usr/bin/env bash
+#
+# Archives (hides) local branches without deleting anything.
+#
+# Usage: git cleanup [-n|--dry-run] [-y|--yes]   archive branches (asks first)
+#        git cleanup [-n] <branch>...             archive exactly these branches
+#        git cleanup list                         show archived branches
+#        git cleanup restore <branch>...          bring archived branches back
+#
+# With no branch names, a branch is archived if either:
+#   - its name has no "/" (i.e. no feat/, fix/, chore/... prefix), or
+#   - its last activity was more than 2 months ago (see git-branch-activity).
+# Never archived automatically: the current branch, main/master/the remote
+# default branch, and branches checked out in another worktree. Named
+# branches can be anything except a checked-out one.
+#
+# Archiving moves refs/heads/<branch> to refs/archive/<branch>. The commits stay
+# reachable (so gc never removes them), but the branch disappears from
+# `git branch`, `git lg --all`, tab completion etc. Restoring moves it back.
+
+set -euo pipefail
+
+ARCHIVE=refs/archive
+BOLD=$'\033[1m'; DIM=$'\033[2m'; RESET=$'\033[0m'
+
+case "${1:-}" in
+list)
+    git for-each-ref --sort=-committerdate \
+        --format="%(refname:strip=2)${DIM}  %(committerdate:short)  %(objectname:short)  %(contents:subject)${RESET}" \
+        "$ARCHIVE"
+    exit
+    ;;
+restore)
+    shift
+    [ $# -gt 0 ] || { echo "usage: git cleanup restore <branch>..." >&2; exit 1; }
+    for b in "$@"; do
+        sha=$(git rev-parse -q --verify "$ARCHIVE/$b") ||
+            { echo "not archived: $b" >&2; exit 1; }
+        if git show-ref -q --verify "refs/heads/$b"; then
+            echo "branch already exists: $b (archived copy is at $ARCHIVE/$b)" >&2
+            exit 1
+        fi
+        git update-ref -m "cleanup: restore" "refs/heads/$b" "$sha" ""
+        git update-ref -d "$ARCHIVE/$b" "$sha"
+        echo "restored $b"
+    done
+    exit
+    ;;
+esac
+
+dry_run=0
+yes=0
+named=()
+for a in "$@"; do
+    case "$a" in
+    -n | --dry-run) dry_run=1 ;;
+    -y | --yes) yes=1 ;;
+    -*) echo "unknown argument: $a" >&2; exit 1 ;;
+    *) named+=("$a") ;;
+    esac
+done
+
+current=$(git symbolic-ref -q --short HEAD || true)
+remote_head=$(git symbolic-ref -q --short refs/remotes/origin/HEAD || true)
+main_branch=${remote_head#*/}
+cutoff=$(date -d '2 months ago' +%s)
+
+# Branches checked out in any worktree (including this one).
+checked_out=$(git worktree list --porcelain | sed -n 's|^branch refs/heads/||p')
+
+to_archive=()
+reasons=()
+
+if [ ${#named[@]} -gt 0 ]; then
+    # Explicitly named branches: archive exactly these, no prompt.
+    for b in "${named[@]}"; do
+        git show-ref -q --verify "refs/heads/$b" ||
+            { echo "no such branch: $b" >&2; exit 1; }
+        if grep -qxF -- "$b" <<<"$checked_out"; then
+            echo "can't archive $b: it's checked out (switch away first)" >&2
+            exit 1
+        fi
+        to_archive+=("$b")
+        reasons+=("requested")
+    done
+    yes=1
+else
+    while read -r t b; do
+        [ "$b" = "$current" ] && continue
+        [ "$b" = main ] || [ "$b" = master ] || [ "$b" = "$main_branch" ] && continue
+        grep -qxF -- "$b" <<<"$checked_out" && continue
+
+        why=()
+        [[ $b != */* ]] && why+=("no prefix")
+        [ "$t" -lt "$cutoff" ] && why+=("last used $(date -d "@$t" +%F)")
+        [ ${#why[@]} -gt 0 ] || continue
+
+        to_archive+=("$b")
+        reasons+=("$(IFS=,; echo "${why[*]}" | sed 's/,/, /g')")
+    done < <(git branch-activity)
+fi
+
+if [ ${#to_archive[@]} -eq 0 ]; then
+    echo "Nothing to archive."
+    exit
+fi
+
+echo "Branches to archive:"
+for i in "${!to_archive[@]}"; do
+    printf "  %s%s%s  ${DIM}(%s)${RESET}\n" "$BOLD" "${to_archive[$i]}" "$RESET" "${reasons[$i]}"
+done
+
+[ "$dry_run" = 1 ] && exit
+
+if [ "$yes" = 0 ]; then
+    read -r -p "Archive ${#to_archive[@]} branch(es)? [y/N] " answer
+    [[ $answer == [yY]* ]] || { echo "Aborted."; exit 1; }
+fi
+
+for b in "${to_archive[@]}"; do
+    sha=$(git rev-parse "refs/heads/$b")
+    dest="$ARCHIVE/$b"
+    # Don't clobber an older archived branch with the same name.
+    if git show-ref -q --verify "$dest"; then
+        dest="$dest-$(date +%Y%m%d-%H%M%S)"
+    fi
+    # Create the archive ref first, then remove the branch ref only if it
+    # still points at the same commit, so nothing can be lost in between.
+    git update-ref -m "cleanup: archive $b" "$dest" "$sha" ""
+    git update-ref -d "refs/heads/$b" "$sha"
+done
+
+echo "Archived ${#to_archive[@]} branch(es). See them with 'git cleanup list';" \
+     "bring one back with 'git cleanup restore <branch>'."

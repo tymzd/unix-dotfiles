@@ -1,0 +1,208 @@
+#!/usr/bin/env bash
+#
+# Pretty one-line git log that adapts to the terminal width.
+#
+# Usage: git lg [N] [git log args...]   last N commits (default 10)
+#        git lg [N] --all [args...]     every local branch with its last N
+#                                       (default 5) commits not on main
+#
+# Each line is prefixed with ~i so you can refer to the commit as HEAD~i
+# (or <branch>~i in --all mode).
+# When the output would overflow the terminal, it is slimmed down in order:
+#   1. drop the author
+#   2. truncate the commit message
+#   3. drop the date (if the message would otherwise get too short)
+#
+# --all mode:
+#   - Only shows commits that you authored (user.email) and that aren't on
+#     the main branch (local main/master and the remote default branch).
+#   - Branches are listed least recently used first, so the current branch
+#     and other recent ones end up at the bottom, next to the prompt. "Used"
+#     is the latest of: last checkout of the branch, and the last update to
+#     the branch (commit, amend, rebase, reset...).
+#   - The main branch itself is skipped unless it's the current branch.
+
+US=$'\x1f'
+FORMAT="%h${US}%ad${US}%an${US}%D${US}%s"
+
+num_lines=
+case "$1" in
+    '' | *[!0-9]*) ;;
+    *) num_lines=$1; shift ;;
+esac
+
+all_mode=0
+args=()
+for a in "$@"; do
+    if [ "$a" = --all ]; then all_mode=1; else args+=("$a"); fi
+done
+
+# Only fit to width when writing to a terminal; 0 means "no limit".
+cols=0
+if [ -t 1 ]; then
+    cols=$(tput cols 2>/dev/null || echo 0)
+fi
+
+# gawk counts UTF-8 characters correctly (for emoji/CJK in messages etc.).
+AWK=$(command -v gawk || command -v awk)
+
+# Formats records into width-aware, coloured lines.
+#
+# Input records are FORMAT lines, optionally prefixed with an explicit
+# "<index>\x1f" (otherwise records are numbered 0, 1, 2...). Any other line
+# (branch headers, -p/--stat output) is passed through unchanged and doesn't
+# count towards the width calculation.
+# Optional $1: minimum slimming level (1 = never show the author).
+render() {
+    "$AWK" -F '\x1f' -v cols="$cols" -v min_lvl="${1:-0}" '
+        BEGIN {
+            MIN_MSG = 20   # shortest message we accept before dropping the date
+            Y = "\033[33m"; G = "\033[32m"; B = "\033[1;34m"; R = "\033[31m"; N = "\033[0m"
+        }
+
+        NF != 5 && NF != 6 { raw[NR] = 1; line[NR] = $0; next }
+
+        {
+            idx = (NF == 6) ? $1 : i++
+            o = NF - 5
+            hash[NR] = $(o+1); date[NR] = $(o+2); author[NR] = $(o+3); subj[NR] = $(o+5)
+            deco[NR] = ($(o+4) == "") ? "" : " (" $(o+4) ")"
+            prefix[NR] = "  ~" idx " "
+        }
+
+        # Visible width of everything except the message, for a given level.
+        function fixed(n, lvl,    w) {
+            w = length(prefix[n]) + length(hash[n]) + length(deco[n]) + 1
+            if (lvl < 3) w += length(date[n]) + 1
+            if (lvl < 1) w += length(author[n]) + 3
+            return w
+        }
+
+        END {
+            # Choose one level for the whole output so columns stay consistent.
+            lvl = min_lvl + 0
+            if (cols > 0) {
+                if (lvl == 0)
+                    for (n = 1; n <= NR; n++)
+                        if (!raw[n] && fixed(n, 0) + length(subj[n]) > cols) { lvl = 1; break }
+                if (lvl == 1)
+                    for (n = 1; n <= NR; n++)
+                        if (!raw[n] && fixed(n, 1) + length(subj[n]) > cols) { lvl = 2; break }
+                if (lvl == 2)
+                    for (n = 1; n <= NR; n++) {
+                        if (raw[n]) continue
+                        want = length(subj[n]) < MIN_MSG ? length(subj[n]) : MIN_MSG
+                        if (cols - fixed(n, 2) < want) { lvl = 3; break }
+                    }
+            }
+
+            for (n = 1; n <= NR; n++) {
+                if (raw[n]) { print line[n]; continue }
+
+                s = subj[n]
+                if (lvl >= 2) {
+                    avail = cols - fixed(n, lvl)
+                    if (avail < 1) avail = 1
+                    if (length(s) > avail) s = substr(s, 1, avail - 1) "…"
+                }
+
+                out = prefix[n] Y hash[n] N
+                if (lvl < 3) out = out " " G date[n] N
+                if (lvl < 1) out = out " " B "<" author[n] ">" N
+                out = out R deco[n] N " " s
+                print out
+            }
+        }
+    '
+}
+
+if [ "$all_mode" = 0 ]; then
+    git log -n "${num_lines:-10}" --date=short --pretty=tformat:"$FORMAT" "${args[@]}" | render
+    exit
+fi
+
+# ---------------------------------------------------------------- --all mode
+
+per_branch=${num_lines:-5}
+me=$(git config user.email)
+current=$(git symbolic-ref -q --short HEAD)
+
+# The "main" refs: commits reachable from any of these are hidden.
+bases=()
+remote_head=$(git symbolic-ref -q refs/remotes/origin/HEAD)
+[ -n "$remote_head" ] && bases+=("$remote_head")
+for b in main master; do
+    git show-ref -q --verify "refs/heads/$b" && bases+=("refs/heads/$b")
+done
+main_branch=${remote_head##*/}  # e.g. "main" from refs/remotes/origin/main
+
+# All branches, most recently used first (see git-branch-activity), with the
+# time of last use kept for the "N days ago" annotation.
+declare -A last_used
+branches=()
+if [ -n "$current" ]; then
+    branches+=("$current")
+else
+    branches+=(HEAD)  # detached
+fi
+while read -r t b; do
+    last_used[$b]=$t
+    [ "$b" = "$current" ] && continue
+    [ "$b" = main ] || [ "$b" = master ] || [ "$b" = "$main_branch" ] && continue
+    branches+=("$b")
+done < <(git branch-activity)
+
+BOLD=$'\033[1m'; DIM=$'\033[2m'; GREEN=$'\033[1;32m'; RESET=$'\033[0m'
+
+# "today" / "yesterday" / "N days ago", counted in calendar days.
+today=$(date -d "$(date +%F)" +%s)
+ago() {
+    local day days
+    day=$(date -d "$(date -d "@$1" +%F)" +%s)
+    days=$(( (today - day + 43200) / 86400 ))  # +12h absorbs DST shifts
+    case $days in
+        0) echo today ;;
+        1) echo yesterday ;;
+        *) echo "$days days ago" ;;
+    esac
+}
+
+{
+    # Print oldest first so the most recent branches (and the current one,
+    # which is branches[0]) end up at the bottom, next to the prompt.
+    for (( k = ${#branches[@]} - 1; k >= 0; k-- )); do
+        b=${branches[$k]}
+        [ "$k" = $(( ${#branches[@]} - 1 )) ] || echo
+        when=
+        [ -n "${last_used[$b]:-}" ] && when="  ${DIM}$(ago "${last_used[$b]}")${RESET}"
+        if [ "$k" = 0 ]; then
+            if [ "$b" = HEAD ]; then
+                echo "${GREEN}HEAD (detached)${RESET}"
+            else
+                echo "${GREEN}${b}${RESET}${when}"
+            fi
+        else
+            echo "${BOLD}${b}${RESET}${when}"
+        fi
+
+        # List everything not on main (so ~i matches <branch>~i), then keep
+        # only my commits, up to per_branch of them.
+        out=$(
+            git log --date=short --pretty=tformat:"%ae${US}${FORMAT}" -n 500 \
+                "$b" --not "${bases[@]}" "${args[@]}" |
+            "$AWK" -F '\x1f' -v me="$me" -v max="$per_branch" '
+                {
+                    i = NR - 1
+                    if (tolower($1) != tolower(me)) next
+                    sub(/^[^\x1f]*\x1f/, "")
+                    print i "\x1f" $0
+                    if (++shown >= max) exit
+                }'
+        )
+        if [ -n "$out" ]; then
+            echo "$out"
+        else
+            echo "  ${DIM}(no unmerged commits of yours)${RESET}"
+        fi
+    done
+} | render 1  # every commit is mine, so the author column is redundant
