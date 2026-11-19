@@ -1,7 +1,8 @@
 {
-  "theme": "obsidian",
+  "theme": "moonstone",
   "showRibbon": false,
   "enabledCssSnippets": [
     "vscode-vim"
-  ]
+  ],
+  "cssTheme": "AnuPpuccin"
 }
