@@ -103,6 +103,7 @@ if [[ "$USER" == "timzh" ]]; then
         alias cider="/opt/google/chrome/google-chrome \"--profile-directory=Profile 1\" --app-id=apkjikbjlghbonboeaehkeoadefnfjmb"
         alias cloudtop='ssh ${USER}@${USER}.c.googlers.com -Y -C'
         alias gemini='/google/bin/releases/gemini-cli/tools/gemini'
+        alias jetski='/google/bin/releases/jetski-devs/tools/cli'
         alias plxutil='/google/bin/releases/plx/plxutil/live/plxutil'
         alias pubsub='/google/bin/releases/goops/pubsub/pubsub'
         alias mdformat='/google/bin/releases/corpeng-engdoc/tools/mdformat'
