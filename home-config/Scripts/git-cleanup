@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Archives (hides) local branches without deleting anything.
+# Archives (hides) local branches. The only thing it deletes is tmp/ branches.
 #
 # Usage: git cleanup [-n|--dry-run] [-y|--yes]   archive branches (asks first)
 #        git cleanup [-n] <branch>...             archive exactly these branches
@@ -10,6 +10,8 @@
 # With no branch names, a branch is archived if either:
 #   - its name has no "/" (i.e. no feat/, fix/, chore/... prefix), or
 #   - its last activity was more than 2 months ago (see git-branch-activity).
+# Branches named tmp/... are deleted outright (git branch -D) instead of
+# archived; their tip SHAs are printed so they can be recovered if needed.
 # Never archived automatically: the current branch, main/master/the remote
 # default branch, and branches checked out in another worktree. Named
 # branches can be anything except a checked-out one.
@@ -70,6 +72,7 @@ checked_out=$(git worktree list --porcelain | sed -n 's|^branch refs/heads/||p')
 
 to_archive=()
 reasons=()
+to_delete=()
 
 if [ ${#named[@]} -gt 0 ]; then
     # Explicitly named branches: archive exactly these, no prompt.
@@ -90,6 +93,11 @@ else
         [ "$b" = main ] || [ "$b" = master ] || [ "$b" = "$main_branch" ] && continue
         grep -qxF -- "$b" <<<"$checked_out" && continue
 
+        if [[ $b == tmp/* ]]; then
+            to_delete+=("$b")
+            continue
+        fi
+
         why=()
         [[ $b != */* ]] && why+=("no prefix")
         [ "$t" -lt "$cutoff" ] && why+=("last used $(date -d "@$t" +%F)")
@@ -100,22 +108,41 @@ else
     done < <(git branch-activity)
 fi
 
-if [ ${#to_archive[@]} -eq 0 ]; then
-    echo "Nothing to archive."
+if [ ${#to_archive[@]} -eq 0 ] && [ ${#to_delete[@]} -eq 0 ]; then
+    echo "Nothing to archive or delete."
     exit
 fi
 
-echo "Branches to archive:"
-for i in "${!to_archive[@]}"; do
-    printf "  %s%s%s  ${DIM}(%s)${RESET}\n" "$BOLD" "${to_archive[$i]}" "$RESET" "${reasons[$i]}"
-done
+if [ ${#to_archive[@]} -gt 0 ]; then
+    echo "Branches to archive:"
+    for i in "${!to_archive[@]}"; do
+        printf "  %s%s%s  ${DIM}(%s)${RESET}\n" "$BOLD" "${to_archive[$i]}" "$RESET" "${reasons[$i]}"
+    done
+fi
+if [ ${#to_delete[@]} -gt 0 ]; then
+    echo "Branches to delete:"
+    for b in "${to_delete[@]}"; do
+        printf "  %s%s%s  ${DIM}(tmp/ prefix)${RESET}\n" "$BOLD" "$b" "$RESET"
+    done
+fi
 
 [ "$dry_run" = 1 ] && exit
 
 if [ "$yes" = 0 ]; then
-    read -r -p "Archive ${#to_archive[@]} branch(es)? [y/N] " answer
+    read -r -p "Archive ${#to_archive[@]} and delete ${#to_delete[@]} branch(es)? [y/N] " answer
     [[ $answer == [yY]* ]] || { echo "Aborted."; exit 1; }
 fi
+
+deleted=0
+for b in "${to_delete[@]}"; do
+    sha=$(git rev-parse --short "refs/heads/$b")
+    if git branch -q -D -- "$b"; then
+        echo "deleted $b ${DIM}(was $sha)${RESET}"
+        deleted=$((deleted + 1))
+    else
+        echo "failed to delete $b" >&2
+    fi
+done
 
 for b in "${to_archive[@]}"; do
     sha=$(git rev-parse "refs/heads/$b")
@@ -130,5 +157,7 @@ for b in "${to_archive[@]}"; do
     git update-ref -d "refs/heads/$b" "$sha"
 done
 
-echo "Archived ${#to_archive[@]} branch(es). See them with 'git cleanup list';" \
+[ ${#to_delete[@]} -gt 0 ] && echo "Deleted $deleted tmp/ branch(es)."
+[ ${#to_archive[@]} -gt 0 ] && echo "Archived ${#to_archive[@]} branch(es). See them with 'git cleanup list';" \
      "bring one back with 'git cleanup restore <branch>'."
+exit 0
