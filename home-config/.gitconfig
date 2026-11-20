@@ -73,7 +73,7 @@
 	# lg: see ~/Scripts/git-lg (terminal-width aware)
 	fh = log --follow --format='%C(yellow)%h%Creset %C(green)%ad%Creset %C(blue)%an%Creset  %s' --date=short --
 	wt = worktree
-	# inspect <change>/<patchset>: fetch a Gerrit change from sso://sos/sos into branch change-<change>
-	inspect = "!f() { c=\"${1%%/*}\"; p=\"${1#*/}\"; if [ -z \"$c\" ] || [ \"$c\" = \"$1\" ]; then echo 'usage: git inspect <change>/<patchset>' >&2; return 1; fi; ref=\"refs/changes/$(printf %02d $((c % 100)))/$c/$p\"; git fetch --no-filter --no-tags sso://sos/sos \"$ref\" && git checkout -b \"change-$c\" FETCH_HEAD; }; f"
+	# grab <change>/<patchset> [branch]: fetch a Gerrit change from sso://sos/sos into a new branch (default: change-<change>)
+	grab = "!f() { c=\"${1%%/*}\"; p=\"${1#*/}\"; if [ -z \"$c\" ] || [ \"$c\" = \"$1\" ]; then echo 'usage: git grab <change>/<patchset> [branch]' >&2; return 1; fi; ref=\"refs/changes/$(printf %02d $((c % 100)))/$c/$p\"; git fetch --no-filter --no-tags sso://sos/sos \"$ref\" && git checkout -b \"${2:-change-$c}\" FETCH_HEAD; }; f"
 [http]
 	cookiefile = /usr/local/google/home/timzh/.gitcookies
