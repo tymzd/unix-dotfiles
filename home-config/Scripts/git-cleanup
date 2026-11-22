@@ -8,7 +8,7 @@
 #        git cleanup restore <branch>...          bring archived branches back
 #
 # With no branch names, a branch is archived if either:
-#   - its name has no "/" (i.e. no feat/, fix/, chore/... prefix), or
+#   - its name isn't prefixed by feat/, fix/ or chore/, or
 #   - its last activity was more than 2 months ago (see git-branch-activity).
 # Branches named tmp/... are deleted outright (git branch -D) instead of
 # archived; their tip SHAs are printed so they can be recovered if needed.
@@ -99,7 +99,7 @@ else
         fi
 
         why=()
-        [[ $b != */* ]] && why+=("no prefix")
+        [[ $b == feat/* || $b == fix/* || $b == chore/* ]] || why+=("no feat/fix/chore prefix")
         [ "$t" -lt "$cutoff" ] && why+=("last used $(date -d "@$t" +%F)")
         [ ${#why[@]} -gt 0 ] || continue
 
