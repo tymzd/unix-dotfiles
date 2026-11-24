@@ -7,9 +7,13 @@
 #        git cleanup list                         show archived branches
 #        git cleanup restore <branch>...          bring archived branches back
 #
-# With no branch names, a branch is archived if either:
-#   - its name isn't prefixed by feat/, fix/ or chore/, or
-#   - its last activity was more than 2 months ago (see git-branch-activity).
+# With no branch names, a branch is archived if any of these is true:
+#   - its name isn't prefixed by feat/, fix/ or chore/
+#   - its last activity was more than 2 months ago (see git-branch-activity)
+#   - it has no commits by you (user.email) that aren't already in the main
+#     branch (origin/<default>, falling back to local main/master). Commits
+#     that were rebased or cherry-picked into main count as merged; squash
+#     merges don't. A branch with no commits of its own also counts.
 # Branches named tmp/... are deleted outright (git branch -D) instead of
 # archived; their tip SHAs are printed so they can be recovered if needed.
 # Never archived automatically: the current branch, main/master/the remote
@@ -66,6 +70,25 @@ current=$(git symbolic-ref -q --short HEAD || true)
 remote_head=$(git symbolic-ref -q --short refs/remotes/origin/HEAD || true)
 main_branch=${remote_head#*/}
 cutoff=$(date -d '2 months ago' +%s)
+me=$(git config user.email || true)
+
+# What "merged" is measured against: the remote default branch if we know it,
+# otherwise the usual names, remote first.
+base=
+for r in ${main_branch:+"refs/remotes/origin/$main_branch"} \
+    refs/remotes/origin/main refs/remotes/origin/master refs/heads/main refs/heads/master; do
+    if git rev-parse -q --verify "$r^{commit}" >/dev/null; then
+        base=$r
+        break
+    fi
+done
+
+# Number of my commits on branch $1 that aren't in $base (by patch, so rebased
+# or cherry-picked commits count as merged).
+my_unmerged() {
+    git rev-list --count --no-merges --right-only --cherry-pick \
+        --fixed-strings --author="<$me>" "$base...refs/heads/$1" -- 2>/dev/null || echo 1
+}
 
 # Branches checked out in any worktree (including this one).
 checked_out=$(git worktree list --porcelain | sed -n 's|^branch refs/heads/||p')
@@ -101,6 +124,9 @@ else
         why=()
         [[ $b == feat/* || $b == fix/* || $b == chore/* ]] || why+=("no feat/fix/chore prefix")
         [ "$t" -lt "$cutoff" ] && why+=("last used $(date -d "@$t" +%F)")
+        if [ -n "$base" ] && [ -n "$me" ] && [ "$(my_unmerged "$b")" = 0 ]; then
+            why+=("no unmerged commits of mine")
+        fi
         [ ${#why[@]} -gt 0 ] || continue
 
         to_archive+=("$b")
